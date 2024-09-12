@@ -1,0 +1,1714 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head><!-- hexo injector head_begin start --><link rel="stylesheet" href="/css/my-avatar.css"><!-- hexo injector head_begin end -->
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="仓鼠小乐">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本文我将介绍SAC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SAC算法">
+<meta property="og:url" content="http://example.com/04SAC/index.html">
+<meta property="og:site_name" content="仓鼠小乐的个人博客">
+<meta property="og:description" content="本文我将介绍SAC">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-d5fa72ff00bb69449928fba1e6911a8a_1440w.webp">
+<meta property="article:published_time" content="2024-09-04T06:51:26.073Z">
+<meta property="article:modified_time" content="2024-09-11T04:56:01.318Z">
+<meta property="article:author" content="仓鼠小乐">
+<meta property="article:tag" content="SAC算法">
+<meta property="article:tag" content="Actor-Critic算法">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pic1.zhimg.com/80/v2-d5fa72ff00bb69449928fba1e6911a8a_1440w.webp">
+  
+  
+  
+  <title>SAC算法 - 仓鼠小乐的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/Scroll.css">
+<link rel="stylesheet" href="/css/Shubiao.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"🐾","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"HgEYE7ANotcpcNCkkJ3S91rY-MdYXbMMI","app_key":"R0dhXbKyHGpfckjX1TWACSm6","server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>仓鼠小乐🐹</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="SAC算法"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        仓鼠小乐
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-09-04 14:51" pubdate>
+          2024年9月4日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          10k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          86 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">SAC算法</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年9月11日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言">前言</h2>
+<p>不过，SAC本身介绍的能量模型和最大熵模型内容已经能够形成一条完备的逻辑链了。从基本模型开始，看看SAC这一条路径到底干了些什么吧~</p>
+<h2 id="最大熵模型">1、最大熵模型</h2>
+<h3 id="为什么要用最大熵模型">1.1 为什么要用最大熵模型</h3>
+<p>传统的强化学习的目的是找出一个策略来最大化奖励，即目标函数：</p>
+<p><span class="math display">\[
+π^*= \arg \max _{\pi}\mathbb {E}_{(st,at)∼π}[\Sigma_tR(s_t,a_t)]
+\]</span> 而最大熵强化学习是在最大化奖励的同时最大化熵： <span
+class="math display">\[
+π^*= \arg \max _{\pi}\mathbb {E}_{(st,at)∼π}[\Sigma_tR(s_t,a_t)+\alpha
+H(\pi(·|s_t))]
+\]</span></p>
+<blockquote>
+<p>信息熵的公式为：<span
+class="math inline">\(H(X)=−\sum_{i=1}^np(x_i)log⁡p(x_i)\)</span>
+用来表示</p>
+</blockquote>
+<p>这样子做有几个好处：</p>
+<ul>
+<li><strong>加强探索</strong>。利用熵让每一步的决策增加随机性，相当于强化了RL中的探索。这一方面能够加速之后的学习，另一方面可以防止策略过早地收敛到局部最优解。</li>
+<li><strong>变确定性策略为随机策略</strong>。学过博弈论的小伙伴可能知道，在进行博弈时一个人的最优策略往往是混合策略，即随机策略往往是最优策略。增加熵可以增强策略的随机性，从而有助于收敛到最优策略。</li>
+<li><strong>作为复杂任务的初始化</strong>。最大熵策略不仅学到一个策略，还能够捕获到所有的行为模式，这类似于CV、NLP中预训练的想法，先训练一个捕获到很多模式的模型，再微调参数应用到自己的模型，这大大加快了训练的速度。</li>
+<li><strong>加强<a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E9%B2%81%E6%A3%92%E6%80%A7&amp;zhida_source=entity&amp;is_preview=1">鲁棒性</a></strong>。仅仅最大化奖励的话，策略倾向于只找到一条路径，如果这条路径短了，那策略的表现就会迅速下降；而最大熵策略可以找到所有的行为模式，就算一条路径断了，还可以从另一条路径达到同样的结果。</li>
+</ul>
+<h3 id="sac的最大熵模型的不同之处">1.2 SAC的最大熵模型的不同之处</h3>
+<p>其实，在SAC之前，很多强化学习算法都用到了熵作为正则化参数来增强策略的探索。</p>
+<p>A3C：</p>
+<p>∇θ′log⁡π(at∣st;θ′)(Rt−V(st;θv))+β∇θ′H(π(st;θ′))</p>
+<p>PPO：</p>
+<p>LtCLIP+VF+S(θ)=E^t[LtCLIP(θ)−c1LtVF(θ)+c2H[πθ](st)]</p>
+<p>PGQL：</p>
+<p>Δθ∝Es,aQπ(s,a)∇θlog⁡π(s,a)+αE∇θHπ(s)s</p>
+<p> class Student:    def <strong>init</strong>(self):        self._age
+= 20    <span class="citation" data-cites="property">@property</span>  
+ def age(self):        return self._age​​student = Student()​#
+设置属性student.age = 18'''报错：property 'age' of 'Student' object has
+no setter'''​# 获取属性，print('学生年龄为：' +
+str(student.age))"""输出学生年龄为：20"""​#只有通过内部属性才能更改值，更加安全student._age
+= 18print('学生年龄为：' +
+str(student.age))"""输出学生年龄为：18"""​python</p>
+<blockquote>
+<p>这个地方也有人认为SAC的熵经过策略<a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E6%A2%AF%E5%BA%A6%E5%AE%9A%E7%90%86&amp;zhida_source=entity&amp;is_preview=1">梯度定理</a>推导之后等价于A3C的熵，不过无论如何，SAC的文章真正从理论上分析了VQπ中熵的存在性和可行性</p>
+</blockquote>
+<h3 id="从贝尔曼方程理解最大熵模型的值函数">1.3 从<a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E8%B4%9D%E5%B0%94%E6%9B%BC%E6%96%B9%E7%A8%8B&amp;zhida_source=entity&amp;is_preview=1">贝尔曼方程</a>理解最大熵模型的值函数</h3>
+<blockquote>
+<p>借用了下<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/70360272">这个</a>画的图</p>
+</blockquote>
+<p><strong>1）</strong>首先看看普通强化学习的目标函数： <span
+class="math display">\[
+\pi^{*}=\arg \max _{\pi} \mathbb{E}_{\left(s_{t}, a_{t}\right) \sim
+\rho_{\pi}}\left[\sum_{t} R\left(s_{t}, a_{t}\right)\right]
+\]</span></p>
+<p>其贝尔曼方程为：</p>
+<p><span class="math display">\[
+Q\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right) \leftarrow
+r\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)+\gamma
+\mathbb{E}_{\mathbf{s}_{t+1} \sim p, \mathbf{a}_{t+1} \sim
+\pi}\left[Q\left(\mathbf{s}_{t+1}, \mathbf{a}_{t+1}\right)\right]
+\]</span></p>
+<p><img
+src="https://pic1.zhimg.com/v2-c6f4a72b394358378732c312ab1e19a2_b.jpg" srcset="/img/loading.gif" lazyload /></p>
+<p>回溯图</p>
+<p>从回溯图的角度，容易看到树的根结点<span
+class="math inline">\(q_{\pi}(s, a)\)</span> 实际上就是<span
+class="math inline">\(r\)</span>与 $q_{}(s^{}, a^{}) $的期望的和。</p>
+<p><strong>2）</strong>再看看最大熵强化学习的目标函数： <span
+class="math display">\[
+\pi^{*}=\arg \max _{\pi} \mathbb{E}_{\left(s_{t}, a_{t}\right) \sim
+p_{\pi}}[\sum_{t} \underbrace{R\left(s_{t}, a_{t}\right)}_{\text {reward
+}}+\alpha \underbrace{H\left(\pi\left(\cdot \mid
+s_{t}\right)\right)}_{\text {entropy }}]
+\]</span></p>
+<blockquote>
+<p>这个 <span class="math inline">\(\alpha\)</span>
+是温度系数，用来衡量熵项的重要程度，后面的推导中如果没有写这一项的话是因为默认值为1。</p>
+</blockquote>
+<p>可以看到这个熵是加在<strong>状态</strong>上的，和动作无关。反映到回溯图中，就是：</p>
+<p><img
+src="https://pic3.zhimg.com/v2-adba9e16e4c9c8ea31635a9a1abd3946_b.jpg" srcset="/img/loading.gif" lazyload /></p>
+<p>加了熵的回溯图</p>
+<p>类比一下，可以把$H ((|s^)) <span
+class="math inline">\(看作是状态价值函数，把\)</span>(a_{t+1}|s_{t+1}
+)<span class="math inline">\(看作动作价值函数，那么：\)</span>$ H
+((|s_{t+1}))=-<em>{a</em>{t+1} A}p(a_{t+1}|s_{t+1})(a_{t+1}|s_{t+1}
+)=-<em>{a</em>{t+1} }(a_{t+1}|s_{t+1} ) $$
+即在一个状态下的熵=在这个状态下对于每一个动作的可能性进行求期望，再反映到回溯图中，就可以看到熵和q是可以写在一起的：</p>
+<p><img
+src="https://pica.zhimg.com/v2-47d34a96b5f91423bad44b7b3b2c5cb6_b.jpg" srcset="/img/loading.gif" lazyload /></p>
+<p>熵拆解后的回溯图</p>
+<p>于是贝尔曼方程可以写为：</p>
+<p><span class="math display">\[
+Q\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right) \leftarrow
+r\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)+\gamma
+\mathbb{E}_{\mathbf{s}_{t+1} \sim p, \mathbf{a}_{t+1} \sim
+\pi}\left[Q\left(\mathbf{s}_{t+1}, \mathbf{a}_{t+1}\right)-\log
+\pi\left(\mathbf{a}_{t+1} \mid \mathbf{s}_{t+1}\right)\right]
+\]</span> 而我们知道在之前的强化学习中，贝尔曼方程中Q与V的关系是：</p>
+<p><span class="math display">\[
+Q\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right) \triangleq
+r\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)+\gamma
+\mathbb{E}_{\mathbf{s}_{t+1} \sim
+p}\left[V\left(\mathbf{s}_{t+1}\right)\right]
+\]</span> <span
+class="math inline">\(p=p(s_{t+1}|s_t)\)</span>即从状态<span
+class="math inline">\(s_{t}\)</span>转移到<span
+class="math inline">\(s_{t+1}\)</span>的状态转移分布或概率函数，就是状态转移的概率。</p>
+<p>因此，对比以上两式，就可以定义<span
+class="math inline">\(V\)</span>函数：</p>
+<p><span class="math display">\[
+r\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)+\gamma
+\mathbb{E}_{\mathbf{s}_{t+1} \sim p, \mathbf{a}_{t+1} \sim
+\pi}\left[Q\left(\mathbf{s}_{t+1}, \mathbf{a}_{t+1}\right)-\log
+\pi\left(\mathbf{a}_{t+1} \mid
+\mathbf{s}_{t+1}\right)\right]=r\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)+\gamma \mathbb{E}_{\mathbf{s}_{t+1} \sim
+p}\left[V\left(\mathbf{s}_{t+1}\right)\right]
+\\
+\gamma \mathbb{E}_{\mathbf{s}_{t+1} \sim p, \mathbf{a}_{t+1} \sim
+\pi}\left[Q\left(\mathbf{s}_{t+1}, \mathbf{a}_{t+1}\right)-\log
+\pi\left(\mathbf{a}_{t+1} \mid \mathbf{s}_{t+1}\right)\right]=\gamma
+\mathbb{E}_{\mathbf{s}_{t+1} \sim
+p}\left[V\left(\mathbf{s}_{t+1}\right)\right]
+\\
+V\left(\mathbf{s}_{t}\right)=\mathbb{E}_{\mathbf{a}_{t} \sim
+\pi}\left[Q\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)-\log
+\pi\left(\mathbf{a}_{t} \mid \mathbf{s}_{t}\right)\right]
+\]</span></p>
+<h3 id="直接从公式理解值函数">1.4 直接从公式理解值函数</h3>
+<p>1.3节从贝尔曼方程的角度理解了值函数之间的关系，不过说到底还是图像化的理解，从公式的角度出发其实可以直接定义出来<span
+class="math inline">\(Q、V\)</span>，就是没1.3那么好理解而已。不过从严谨性的角度，公式化的定义是非常有必要的。</p>
+<p>1）首先看看标准的<span
+class="math inline">\(Q、V\)</span>函数，其被定义为条件化的累积奖励：
+<span class="math display">\[
+Q_{\pi}(s, a)=\underset{s_{t}, a_{t} \sim
+\pi}{\mathbb{E}}\left[\sum_{t=0}^{\infty} \gamma^{t} r\left(s_{t},
+a_{t}\right) \mid s_{0}=s, a_{0}=a\right]
+\\
+V_{\pi}(s)=\underset{s_{t}, a_{t} \sim
+\pi}{\mathbb{E}}\left[\sum_{t=0}^{\infty} \gamma^{t}\left(r\left(s_{t},
+a_{t}\right)\right) \mid s_{0}=s\right]
+\]</span></p>
+<p>2）类似的，可以定义出最大熵版本的Q和V： <span class="math display">\[
+\begin{aligned} Q_{s o f t}^{\pi}(s, a) =\underset{s_{t}, a_{t} \sim
+\rho_{\pi}}{\mathbb{E}}\left[\sum_{t=0}^{\infty} \gamma^{t}
+r\left(s_{t}, a_{t}\right)+\alpha \sum_{t=1}^{\infty} \gamma^{t}
+H\left(\pi\left(\cdot \mid s_{t}\right)\right) \mid s_{0}=s,
+a_{0}=a\right] \end{aligned}
+\]</span></p>
+<p><span class="math display">\[
+V_{s o f t}^{\pi}(s)=\underset{s_{t}, a_{t} \sim
+\rho_{\pi}}{\mathbb{E}}\left[\sum_{t=0}^{\infty}
+\gamma^{t}\left(r\left(s_{t}, a_{t}\right)+\alpha H\left(\pi\left(\cdot
+\mid s_{t}\right)\right)\right) \mid s_{0}=s\right]
+\]</span></p>
+<p>从Q的定义出发，同样可以推出贝尔曼方程：</p>
+<p><span class="math display">\[
+\begin{aligned} Q_{s o f t}^{\pi}(s, a)
+&amp;=\underset{\substack{s^{\prime} \sim p\left(s^{\prime} \mid s,
+a\right) \\ a^{\prime} \sim \pi}}{\mathbb{E}}\left[r(s,
+a)+\gamma\left(Q_{\text {soft }}^{\pi}\left(s^{\prime},
+a^{\prime}\right)+\alpha H\left(\pi\left(\cdot \mid
+s^{\prime}\right)\right)\right)\right] \\ &amp;=\underset{s^{\prime}
+\sim p\left(s^{\prime} \mid s, a\right)}{\mathbb{E}}\left[r(s, a)+\gamma
+V_{s o f t}^{\pi}\left(s^{\prime}\right)\right] \end{aligned}
+\]</span></p>
+<p>其中</p>
+<p><span class="math display">\[
+\begin{aligned} V_{s o f t}^{\pi}(s) &amp;=\mathbb{E}_{a \sim
+\pi}\left[Q_{s o f t}^{\pi}(s, a)\right]+\alpha H(\pi(\cdot \mid s))
+\\&amp;=\mathbb{E}_{a \sim \pi}\left[Q_{s o f t}^{\pi}(s,
+a)\right]-\alpha \mathbb{E}_{a \sim \pi}\left[(\log \pi(a \mid s)
+\right]\\ &amp;=\underset{a \sim \pi}{\mathbb{E}}\left[Q_{s o f
+t}^{\pi}(s, a)-\alpha \log \pi(a \mid s)\right] \end{aligned}
+\]</span></p>
+<blockquote>
+<p>上面的最大熵Q、V的定义用在SAC中，而Soft Q
+Learning一开始用的是另一套式子</p>
+</blockquote>
+<h3 id="策略的形式">1.5 策略的形式</h3>
+<p>在1.3、1.4节我们知道了值函数的形式，问题在于，我们最终的目的还是要得到一个策略，那<strong>策略是什么形式呢？</strong></p>
+<p>还记得价值函数<span class="math inline">\(V\)</span>的表示不？</p>
+<p><span class="math display">\[
+V\left(\mathbf{s}_{t}\right)=\mathbb{E}_{\mathbf{a}_{t} \sim
+\pi}\left[Q\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)-\alpha \log
+\pi\left(\mathbf{a}_{t} \mid \mathbf{s}_{t}\right)\right]
+\]</span> 从<span
+class="math inline">\(V\)</span>的表达式中可以反解出<span
+class="math inline">\(\pi\)</span>的形式，移项后可得：</p>
+<p><span class="math display">\[
+\mathbb{E}_{\mathbf{a}_{t} \sim \pi}\left[Q\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)-\alpha\log \pi\left(\mathbf{a}_{t} \mid
+\mathbf{s}_{t}\right)-V\left(\mathbf{s}_{t}\right)\right]=0
+\]</span> <strong>其中一个解为</strong> <span class="math display">\[
+\begin{aligned} \pi\left(s_{t}|a_{t}\right) &amp;=\exp
+\left(\frac{1}{\alpha}\left(Q_{s o f t}\left(s_{t}, a_{t}\right)-V_{s o
+f t}\left(s_{t}\right)\right)\right) \\ &amp;=\frac{\exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t},
+a_{t}\right)\right)}{\exp \left(\frac{1}{\alpha} V_{\text {soft
+}}\left(s_{t}\right)\right)} \end{aligned}
+\]</span></p>
+<p>于是我们得到了策略的形式。</p>
+<blockquote>
+<p>注意，策略的形式不一定是这个，但是<strong>这样的策略一定满足最大熵的值函数约束，这意味着我们可以直接采用这种形式的策略来进行策略迭代。</strong></p>
+</blockquote>
+<h3 id="状态价值函数v的另一种形式"><strong>1.6
+状态价值函数V的另一种形式</strong></h3>
+<p>注意到1.5节推导出的策略形式： <span class="math display">\[
+\begin{aligned} \pi\left(s_{t}|a_{t}\right) =\frac{\exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t},
+a_{t}\right)\right)}{\exp \left(\frac{1}{\alpha} V_{\text {soft
+}}\left(s_{t}\right)\right)} \end{aligned}
+\]</span></p>
+<p>由于策略所有动作概率积分为1：</p>
+<p><span class="math display">\[
+\int\pi\left(s_{t}|a_{t}\right)d \mathbf{a} =\frac{\int\exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t},
+a_{t}\right)\right)d a}{\exp \left(\frac{1}{\alpha} V_{\text {soft
+}}\left(s_{t}\right)\right)}=1
+\]</span></p>
+<p>可以直接得到<span class="math inline">\(V\)</span>与<span
+class="math inline">\(Q\)</span>的第二种关系：</p>
+<p><span class="math display">\[
+V_{\text {soft }}\left(s_{t}\right) \triangleq \alpha \log \int \exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t}, a\right)\right) d a
+\]</span></p>
+<blockquote>
+<p><strong>注意，这种V和Q的关系的前提在于，策略π取1.5节推导出的特殊形式。</strong>
+<strong>这也是Soft Q Learning中采用的形式</strong></p>
+</blockquote>
+<p>将上式回代得<span
+class="math inline">\(\pi\left(s_{t}|a_{t}\right)\)</span>的另一种形式：
+<span class="math display">\[
+\begin{aligned} \pi\left(s_{t}|a_{t}\right)=\frac{\exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t},
+a_{t}\right)\right)}{\exp \left(\frac{1}{\alpha} V_{\text {soft
+}}\left(s_{t}\right)\right)} =\frac{\exp \left(\frac{1}{\alpha} Q_{\text
+{soft }}\left(s_{t}, a_{t}\right)\right)}{ \int \exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t}, a\right)\right) d
+\mathbf{a}} \end{aligned}
+\]</span></p>
+<h3 id="最优策略"><strong>1.7 最优策略</strong></h3>
+<p>注意到最大熵的策略就是最大化<span
+class="math inline">\(V\)</span>的策略，因此直接对<span
+class="math inline">\(V\)</span>求<span
+class="math inline">\(\pi\)</span>的泛函导数，令其为0，得到的就是最优策略：</p>
+<p><span class="math display">\[
+Q\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)-\alpha\log
+\pi\left(\mathbf{a}_{t} \mid \mathbf{s}_{t}\right)-\alpha=0
+\\
+\begin{aligned} \pi\left(s_{t}|a_{t}\right) =\frac{\exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t},
+a_{t}\right)\right)}{e} \end{aligned}
+\]</span> 又因为</p>
+<p><span class="math display">\[
+\int\pi\left(s_{t}|a_{t}\right)d \mathbf{a} =\frac{\int\exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t},
+a_{t}\right)\right)d a}{e}=1
+\\
+\int\exp \left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t},
+a_{t}\right)\right) da=e
+\]</span></p>
+<p>将分母中的e用上式代替，所以</p>
+<p><span class="math display">\[
+\begin{aligned} \pi\left(s_{t}|a_{t}\right) =\frac{\exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t},
+a_{t}\right)\right)}{ \int \exp \left(\frac{1}{\alpha} Q_{\text {soft
+}}\left(s_{t}, a\right)\right) d \mathbf{a}} \end{aligned}
+\]</span></p>
+<p>而1.6节推出的符合条件的策略形式为：</p>
+<p><span class="math display">\[
+\begin{aligned} \pi\left(s_{t}|a_{t}\right)=\frac{\exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t},
+a_{t}\right)\right)}{\exp \left(\frac{1}{\alpha} V_{\text {soft
+}}\left(s_{t}\right)\right)} =\frac{\exp \left(\frac{1}{\alpha} Q_{\text
+{soft }}\left(s_{t}, a_{t}\right)\right)}{ \int \exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t}, a\right)\right) d
+\mathbf{a}} \end{aligned}
+\]</span> 符合最优策略的形式</p>
+<p>因此，<strong>1.5节推出的策略是最优策略。</strong></p>
+<p><strong>又因为在Soft Q
+Learing论文附录中的A.2，最优策略是唯一的。</strong></p>
+<p><strong>因此，1.5节推出的策略是唯一的最优策略。</strong></p>
+<p><strong>至此，我们已经完全分析推导了最大熵框架下的价值函数V、Q，策略π的形式。</strong></p>
+<h2 id="能量模型"><strong>2、能量模型</strong></h2>
+<p>还记得最大熵模型中推导出的<strong>最优策略形式</strong>不？</p>
+<p><span class="math display">\[
+\begin{aligned} \pi\left(s_{t}|a_{t}\right) =\frac{\exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t},
+a_{t}\right)\right)}{\exp \left(\frac{1}{\alpha} V_{\text {soft
+}}\left(s_{t}\right)\right)} \end{aligned}
+\]</span></p>
+<p><strong>这到底是个什么东西？</strong></p>
+<p><strong>Soft Q
+Learning中说它是能量模型，为什么这个东西就是能量模型了？</strong></p>
+<p>在推导完公式之后，还得了解我们推导的到底是个什么东西，这就是这节需要讲的能量模型了。</p>
+<h3 id="为什么要使用能量模型">2.1 为什么要使用能量模型？</h3>
+<p>说到能量模型，就不得不提深度学习三巨头之一的<strong>Yann
+LeCun</strong>了。其凭借着能量模型在生成模型领域大行其道，并提出了“能量模型是通向自主人工智能系统的起点”、“已经做好放弃概率论的准备”等言论。</p>
+<p>所以为什么他这么推崇能量模型呢？</p>
+<p>用他<a
+href="https://link.zhihu.com/?target=http%3A//yann.lecun.com/exdb/publis/orig/lecun-06.pdf">综述</a>里的话来说，就是：</p>
+<blockquote>
+<p>基于能量的学习为许多概率和非概率的学习方法提供了一个统一的框架，特别是图模型和其他结构化模型的非概率训练。<strong>基于能量的学习可以被看作是预测、分类或决策任务的概率估计的替代方法</strong>。由于<strong>不需要适当的归一化</strong>，基于能量的方法避免了概率模型中与估计归一化常数相关的问题。此外，由于没有标准化条件，在学习机器的设计中允许了更多的灵活性。大多数概率模型都可以看作是特殊类型的基于能量的模型，其中能量函数满足一定的归一化条件，<a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0&amp;zhida_source=entity&amp;is_preview=1">损失函数</a>通过学习优化，具有特定的形式。</p>
+</blockquote>
+<h3 id="能量模型的含义">2.2 能量模型的含义</h3>
+<p>对于基本的能量函数而言，给定一个 X ，模型产生与 X 最兼容的Y</p>
+<p><span class="math display">\[
+Y^*=\arg\min_{Y\in\mathcal{Y}} E(Y,X)\\
+\]</span></p>
+<p>其中“最兼容”是指：==小能量值==对应于变量的==高度兼容==，而==大能量值==对应于变量的==高度不兼容==。</p>
+<p>即能量函数要满足下面的性质：</p>
+<p><strong>给定一个<span
+class="math inline">\(X\)</span>，输出的最优<span
+class="math inline">\(Y\)</span>值让能量函数最小</strong></p>
+<blockquote>
+<p>能量函数在不同的技术社区中有不同的名称；它们可以被称为对比函数、价值函数或负对数<a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E4%BC%BC%E7%84%B6%E5%87%BD%E6%95%B0&amp;zhida_source=entity&amp;is_preview=1">似然函数</a>。<br />
+能量函数可以是任意的，只要满足最优的<span
+class="math inline">\(Y\)</span>能让能量最小即可。<br />
+举个例子，监督学习中的图片为<span
+class="math inline">\(X\)</span>，标签为<span
+class="math inline">\(Y_0（X）\)</span>，能量模型<span
+class="math inline">\(E（X，Y）=（Y-Y_0（X))^2\)</span>，输出的Y越接近X
+的标签，能量越低。此时监督学习的loss就是能量函数</p>
+</blockquote>
+<h3 id="能量函数的建模">2.3 能量函数的建模</h3>
+<p>对于决策任务，例如操纵机器人，只需要系统给予正确答案就能获得最低的能量，其他答案获得的更大能量无关紧要（比如RL中我们只需要选择能量最低的action即可）。然而，一个系统的输出有时必须与另一个系统的输出相结合，或者提供给另一个系统作为输入(或者提供给人类决策者)。唯一一致的方法是将所有可能输出的能量转换成一个标准化的概率分布。最简单、最常用的方法即转化为Gibbs分布（又叫做<a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E7%8E%BB%E5%B0%94%E5%85%B9%E6%9B%BC%E5%88%86%E5%B8%83&amp;zhida_source=entity&amp;is_preview=1">玻尔兹曼分布</a>）：</p>
+<p><span class="math display">\[
+P(Y \mid X)=\frac{e^{-\beta E(Y, X)}}{\int_{y \in \mathcal{Y}} e^{-\beta
+E(y, X)}}
+\]</span></p>
+<blockquote>
+<p>玻尔兹曼分布是一种概率分布，它给出一个系统处于某种状态的机率，该几率是此状态下的能量及温度的函。给出为：<br />
+<span class="math display">\[
+p_{i} \propto e^{-\varepsilon_{i} /(k T)}
+\\
+p_{i}=\frac{1}{Q} e^{-\varepsilon_{i} /(k T)}=\frac{e^{-\varepsilon_{i}
+/(k T)}}{\sum_{j=1}^{M} e^{-\varepsilon_{j} /(k T)}}*
+\]</span></p>
+<p>其中 <em><span class="math inline">\(\varepsilon\)</span></em>
+表示能量，<strong>k</strong>是<strong><a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=玻尔兹曼常数&amp;zhida_source=entity&amp;is_preview=1">玻尔兹曼常数</a></strong>，<strong>T</strong>是系统的绝对温度，<strong>M</strong>是系统可访问的所有状态的数量。</p>
+</blockquote>
+<p>可以看到，能量越低，被选中的概率越高，即被选中的动作越优。</p>
+<p>这满足能量函数的性质，所以<strong>玻尔兹曼分布是基于能量的分布</strong></p>
+<h3 id="基于能量的强化学习"><strong>2.4 基于能量的强化学习</strong></h3>
+<p><strong>终于可以知道最大熵模型中的最优策略的含义是什么了：</strong></p>
+<p><span class="math display">\[
+\begin{aligned} \pi\left(s_{t}|a_{t}\right) =\frac{\exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t},
+a_{t}\right)\right)}{\exp \left(\frac{1}{\alpha} V_{\text {soft
+}}\left(s_{t}\right)\right)}=\frac{\exp \left(\frac{1}{\alpha} Q_{\text
+{soft }}\left(s_{t}, a_{t}\right)\right)}{ \int \exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t}, a\right)\right) d
+\mathbf{a}} \end{aligned}
+\]</span> 如果取能量函数：</p>
+<p><span class="math display">\[
+\mathcal{E}\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)=-\frac{1}{\alpha}
+Q_{\operatorname{soft}}\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)
+\]</span> 再让策略正比于负能量：</p>
+<p><span class="math display">\[
+\pi\left(\mathbf{a}_{t} \mid \mathbf{s}_{t}\right) \propto \exp
+\left(-\mathcal{E}\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)\right)
+\]</span> 这不就是玻尔兹曼分布吗？其中不存在温度<span
+class="math inline">\(kT\)</span>对系统概率的影响。</p>
+<p>所以<strong>最大熵强化学习中的最优策略形式是玻尔兹曼分布</strong>，其中$
+$是温度系数。 <span class="math inline">\(\alpha\)</span>
+越大，各个动作被选中的概率差就越小，越接近随机策略； <span
+class="math inline">\(\alpha\)</span>
+越小，各个动作被选中的概率差就越大，越接近确定性策略。通过调节 <span
+class="math inline">\(\alpha\)</span> 可以调节策略的随机性探索。</p>
+<blockquote>
+<p>把强化学习的策略建模为玻尔兹曼分布的想法之前就有过很多，并被称为玻尔兹曼探索，这样子做有个好处就是用随机策略可以加强探索，并且满足<span
+class="math inline">\(Q\)</span>越大被选中的概率越大的条件。</p>
+</blockquote>
+<h3 id="能量策略的好处">2.5 能量策略的好处</h3>
+<p>这时候就要祭出<a
+href="https://link.zhihu.com/?target=https%3A//bair.berkeley.edu/blog/2017/10/06/soft-q-learning/">这张</a>经典的图了：</p>
+<p><img
+src="https://picx.zhimg.com/v2-9a97eee9111031a967cf5823b07087ef_b.jpg" srcset="/img/loading.gif" lazyload /></p>
+<p>能量策略</p>
+<p>传统的基于高斯分布的策略只能捕获单峰的Q值，也就是只能捕获一种行为模式，这种玻尔兹曼分布的能量策略能够捕获多个行为模式，大大增强了表达能力。</p>
+<p>经过前面一大通的推导，现在我们已经理解了基于最大熵和能量模型的强化学习框架，也知道了其中值函数、策略的表达式。</p>
+<p>接下来，根据这个框架，可以导出两个算法。</p>
+<p>第一种，就是类似Q Learning风格的，Soft Q Learning。</p>
+<h3 id="soft-值迭代">3.1 Soft 值迭代</h3>
+<p>再次请出我们的Q和V函数：</p>
+<p><span class="math display">\[
+\begin{aligned} Q_{s o f t}(s, a) =\underset{s^{\prime} \sim
+p\left(s^{\prime} \mid s, a\right)}{\mathbb{E}}\left[r(s, a)+\gamma V_{s
+o f t}\left(s^{\prime}\right)\right] \end{aligned}
+\]</span></p>
+<p><span class="math display">\[
+V_{\text {soft }}\left(s_{t}\right) \triangleq \alpha \log \int \exp
+\left(\frac{1}{\alpha} Q_{\text {soft }}\left(s_{t}, a\right)\right) d
+\mathbf{a}
+\]</span></p>
+<p>那么如何迭代更新得到他们呢？</p>
+<p>只需要把“=”号改成迭代的形式即可：</p>
+<p><span class="math display">\[
+\begin{aligned} &amp;Q_{\mathrm{soft}}\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right) \leftarrow r_{t}+\gamma
+\mathbb{E}_{\mathbf{s}_{t+1} \sim
+p_{\mathbf{s}}}\left[V_{\mathrm{soft}}\left(\mathbf{s}_{t+1}\right)\right],
+\forall \mathbf{s}_{t}, \mathbf{a}_{t}
+\\&amp;V_{\mathrm{soft}}\left(\mathbf{s}_{t}\right) \leftarrow \alpha
+\log \int_{\mathcal{A}} \exp \left(\frac{1}{\alpha}
+Q_{\mathrm{soft}}\left(\mathbf{s}_{t}, \mathbf{a}^{\prime}\right)\right)
+d \mathbf{a}^{\prime}, \forall \mathbf{s}_{t} \end{aligned}
+\]</span></p>
+<blockquote>
+<p>收敛性证明见<a
+href="https://link.zhihu.com/?target=http%3A//proceedings.mlr.press/v70/haarnoja17a/haarnoja17a.pdf">SQL附录</a>，思路是利用<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/458151225">压缩映射</a>的证明方式。</p>
+</blockquote>
+<p>只要不断地这么更新，值函数就会收敛。</p>
+<h3 id="参数化的soft-值优化">3.2 参数化的Soft 值优化</h3>
+<p>在离散的情况下，只需要进行soft 价值迭代就行了。</p>
+<p>为了进一步增强值函数的表示能力，可以将其用 <span
+class="math inline">\(\theta\)</span> 参数化（例如神经网络参数）变成
+<span
+class="math inline">\(Q_{\mathrm{soft}}^{\theta}\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)\)</span>和 $V_{}^{}(_{t})
+$，使其适应连续的状态空间，并且可以使用梯度下降法来优化。</p>
+<p>V：</p>
+<p>求V的话需要对动作进行积分，这在动作空间特别大或者连续动作空间的时候是不可能的，因此可以考虑使用<a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E9%87%8D%E8%A6%81%E6%80%A7%E9%87%87%E6%A0%B7&amp;zhida_source=entity&amp;is_preview=1">重要性采样</a>对其分布进行估计：</p>
+<p><span class="math display">\[
+V_{\mathrm{soft}}^{\theta}\left(\mathbf{s}_{t}\right)=\alpha \log
+\mathbb{E}_{q_{\mathbf{a}^{\prime}}}\left[\frac{\exp
+\left(\frac{1}{\alpha} Q_{\mathrm{soft}}^{\theta}\left(\mathbf{s}_{t},
+\mathbf{a}^{\prime}\right)\right)}{q_{\mathbf{a}^{\prime}}\left(\mathbf{a}^{\prime}\right)}\right]
+\]</span></p>
+<p>$q_{^{}} $
+的话可以是任意分布，初期可以用随机分布，后面可以用当前策略。</p>
+<p>Q：</p>
+<p>求Q的话只需要类似DQN的更新就行了：</p>
+<p><span class="math display">\[
+J_{Q}(\theta)=\mathbb{E}_{\mathbf{s}_{t} \sim q_{\mathrm{s}_{t}},
+\mathbf{a}_{t} \sim
+q_{\mathbf{a}_{t}}}\left[\frac{1}{2}\left(\hat{Q}_{\mathrm{soft}}^{\bar{\theta}}\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)-Q_{\mathrm{soft}}^{\theta}\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)\right)^{2}\right]
+\]</span></p>
+<p>其中</p>
+<p><span class="math display">\[
+\hat{Q}_{\mathrm{soft}}^{\bar{\theta}}\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)=r_{t}+\gamma \mathbb{E}_{\mathbf{s}_{t+1} \sim
+p_{\mathrm{s}}}\left[V_{\mathrm{soft}}^{\bar{\theta}}\left(\mathbf{s}_{t+1}\right)\right]
+\]</span></p>
+<p>对他们进行随机梯度下降就行了。</p>
+<p><span
+class="math inline">\(q_{\mathrm{s}_{t}}\)</span>是当前策略。</p>
+<p><strong>但是还有一个问题</strong>，策略表示是玻尔兹曼分布： <span
+class="math display">\[
+\pi\left(\mathbf{a}_{t} \mid \mathbf{s}_{t}\right) \propto\exp
+\left(\frac{1}{\alpha} Q_{\mathrm{soft}}^{\theta}\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)\right)
+\]</span></p>
+<p>如果是<a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E7%A6%BB%E6%95%A3%E7%A9%BA%E9%97%B4&amp;zhida_source=entity&amp;is_preview=1">离散空间</a>还好，<strong>连续空间怎么从这个玻尔兹曼分布进行抽样呢</strong>？</p>
+<p>换言之，<strong>玻尔兹曼分布怎么用策略表示呢</strong>？</p>
+<h3 id="策略的近似采样">3.3 策略的近似采样</h3>
+<p>作者使用了一个可以用来表示策略的网络来代替玻尔兹曼分布的策略进行采样。随后利用KL散度来缩小用策略网络<span
+class="math inline">\(\pi^\phi\)</span>与基于能量的策略之间的差距：</p>
+<p><span class="math display">\[
+\begin{aligned} J_{\pi}\left(\phi ; \mathbf{s}_{t}\right)=
+\mathrm{D}_{\mathrm{KL}}\left(\pi^{\phi}\left(\cdot \mid
+\mathbf{s}_{t}\right) \| \exp
+\left(\frac{1}{\alpha}\left(Q_{\mathrm{soft}}^{\theta}\left(\mathbf{s}_{t},
+\cdot\right)-V_{\mathrm{soft}}^{\theta}\right)\right)\right)
+\end{aligned}
+\]</span></p>
+<p>作者用了<a
+href="https://link.zhihu.com/?target=https%3A//proceedings.neurips.cc/paper/2016/file/b3ba8f1bee1238a2f37603d90b58898d-Paper.pdf">变分梯度下降</a>进行优化。</p>
+<blockquote>
+<p>不过这种采样网络在SAC的时候被弃掉了，估计可能是又复杂又用处不大</p>
+</blockquote>
+<p>这个采样网络的存在可以看做是actor-critic中的actor。</p>
+<h3 id="soft-q-learning">3.4 Soft Q Learning</h3>
+<p>OK，现在价值函数和策略的采样更新方式都有了，就可以写算法了：</p>
+<p><img
+src="https://pica.zhimg.com/v2-51c51ebd61a203d36115fc0ca51b765e_b.jpg" srcset="/img/loading.gif" lazyload /></p>
+<p>soft q learning</p>
+<h2 id="soft-actor-critic">4、Soft Actor Critic</h2>
+<p>到了喜闻乐见的SAC环节。</p>
+<h3 id="soft-策略迭代policy-iteration">4.1 Soft 策略迭代（Policy
+Iteration）</h3>
+<p>首先先介绍一下 <strong>Policy Iteration</strong>： 它是一种在 Policy
+Evaluation 和 Policy Improvement
+中交替迭代更新的强化学习方法。用大白话来讲的话，Policy
+Evaluation就是在估计某个状态执行某个动作平均能获得多少回报；而Policy
+Improvement 则是将策略调整为执行当前状态具有更大回报的动作。</p>
+<p>SAC<strong>抛弃了对动作进行积分的V函数</strong>： <span
+class="math inline">\(V_{\text {soft }}\left(s_{t}\right) \triangleq
+\alpha \log \int \exp \left(\frac{1}{\alpha} Q_{\text {soft
+}}\left(s_{t}, a\right)\right) d \mathbf{a}\)</span></p>
+<p>采用了另一种V函数： <span class="math display">\[
+V\left(\mathbf{s}_{t}\right)=\mathbb{E}_{\mathbf{a}_{t} \sim
+\pi}\left[Q\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)-\log
+\pi\left(\mathbf{a}_{t} \mid \mathbf{s}_{t}\right)\right]
+\]</span></p>
+<blockquote>
+<p>这样做就消除了V对动作积分难的问题</p>
+</blockquote>
+<p>利用强化学习中的<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/541571513">策略迭代</a>方法，每次策略改进得到更好的策略，然后为新策略评估一个价值函数，然后继续改进策略，以此类推。就可以得到一个最优策略。</p>
+<p>1）<strong>策略估计（Policy Evaluation）</strong></p>
+<p>首先需要了解贝尔曼方程： <span class="math display">\[
+Q(s_t,a_t)=r(s_t,a_t)+\gamma\sum_{s^{\prime}\in
+S}P(s^{\prime}|s)V(s^{\prime})=r(s_t,a_t)+\gamma\mathbb{E}_{\mathbf{s}_{t+1}\sim
+p}\left[V(\mathbf{s}_{t+1})\right]
+\]</span> 对其==考虑熵==，定义一个考虑熵的<span
+class="math inline">\(Q(s,a)\)</span>为 <span
+class="math inline">\(\mathcal{T}^π Q ( s_t , a_t
+)\)</span>。<del>不断对价值函数运用贝尔曼算子，价值函数就能够收敛到策略<span
+class="math inline">\(\pi\)</span>下的价值估计：</del> <span
+class="math display">\[
+\mathcal{T}^{\pi} Q\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)
+\triangleq r\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)+\gamma
+\mathbb{E}_{\mathbf{s}_{t+1} \sim
+p}\left[V\left(\mathbf{s}_{t+1}\right)\right]，其中V(\mathbf{s}_{t+1})=\mathbb{E}_{\mathbf{a}_{t+1}\sim\pi}\left[Q(\mathbf{s}_{t+1},\mathbf{a}_{t+1})-\log\pi(\mathbf{a}_{t+1}|\mathbf{s}_{t+1})\right]
+\]</span></p>
+<p><span class="math display">\[
+\mathcal{T}^{\pi} Q\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)
+\triangleq r\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)+\gamma
+\mathbb{E}_{\mathbf{s}_{t+1} \sim
+p,{\mathbf{a}_{t+1}}\sim\pi}\left[Q(\mathbf{s}_{t+1},\mathbf{a}_{t+1})-\log\pi(\mathbf{a}_{t+1}|\mathbf{s}_{t+1})\right]
+\]</span></p>
+<blockquote>
+<p>证明：把奖励<span
+class="math inline">\(r\)</span>和熵写到一起，因此最大熵目标变成了包含熵的奖励：
+<span class="math display">\[
+r_{\pi}\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right) \triangleq
+r\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)+\mathbb{E}_{\mathbf{s}_{t+1} \sim
+p}\left[\mathcal{H}\left(\pi\left(\cdot \mid
+\mathbf{s}_{t+1}\right)\right)\right]
+\]</span> 而这种修改了的奖励形式恰好符合策略估计的<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/541571513">收敛证明</a>：<br />
+<span class="math display">\[
+Q\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right) \leftarrow
+r_{\pi}\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)+\gamma
+\mathbb{E}_{\mathbf{s}_{t+1} \sim p, \mathbf{a}_{t+1} \sim
+\pi}\left[Q\left(\mathbf{s}_{t+1}, \mathbf{a}_{t+1}\right)\right]
+\]</span> 所以价值函数收敛</p>
+</blockquote>
+<p>2）<strong>策略改进（Policy Improvement）</strong></p>
+<p>在1、2节我们知道，<strong>最优策略是采用玻尔兹曼分布能量形式的策略</strong></p>
+<p>SAC利用这一点来更新策略<strong>：</strong></p>
+<p><span class="math display">\[
+\pi_{\text {new }}=\arg \min _{\pi^{\prime} \in \Pi}
+\mathrm{D}_{\mathrm{KL}}\left(\pi^{\prime}\left(\cdot \mid
+\mathbf{s}_{t}\right) \| \frac{\exp
+\left(Q^{\pi_{\mathrm{old}}}\left(\mathbf{s}_{t},
+\cdot\right)\right)}{Z^{\pi_{\text {old
+}}}\left(\mathbf{s}_{t}\right)}\right)
+\]</span></p>
+<p>但是并没有直接采用玻尔兹曼分布，而是通过高斯分布来近似玻尔兹曼分布，因为高斯分布更好处理一些。</p>
+<blockquote>
+<p>但是这样直接丢失了玻尔兹曼分布捕获多峰函数的能力</p>
+</blockquote>
+<p><span
+class="math inline">\(Z\)</span>是归一化函数。在上式中，我们先将<span
+class="math inline">\(Q^{\pi_{old}}_{soft}\)</span>指数化为<span
+class="math inline">\(\exp(\alpha^{-1}{Q^{\pi_{old}}_{soft}})\)</span>再将其归一化为分布<span
+class="math inline">\(\frac{\exp
+\left(Q^{\pi_{\mathrm{old}}}\left(\mathbf{s}_{t},
+\cdot\right)\right)}{Z^{\pi_{\text {old
+}}}\left(\mathbf{s}_{t}\right)}\)</span>，其中<span
+class="math inline">\(Z^{\pi_{old}}(s_t)=\int
+\exp(\alpha^{-1}{Q^{\pi_{old}}_{soft}})
+da_t\)</span>为归一化函数。我们希望找到一个策略<span
+class="math inline">\(\pi \prime\)</span>在状态<span
+class="math inline">\(s_t\)</span>下的动作分布与<span
+class="math inline">\(\frac{\exp
+\left(Q^{\pi_{\mathrm{old}}}\left(\mathbf{s}_{t},
+\cdot\right)\right)}{Z^{\pi_{\text {old
+}}}\left(\mathbf{s}_{t}\right)}\)</span>分布的KL-divergence最小
+，即希望<span class="math inline">\(\pi
+\prime(\cdot|s_t)\)</span>与分布<span class="math inline">\(\frac{\exp
+\left(Q^{\pi_{\mathrm{old}}}\left(\mathbf{s}_{t},
+\cdot\right)\right)}{Z^{\pi_{\text {old
+}}}\left(\mathbf{s}_{t}\right)}\)</span>越相似越好。采用普通的策略优化只会在最高峰满足相似性，而soft策略优化会在整个分布上尽量与价值函数保持相似，不仅保证了赋予动作价值更高的动作更大的概率，还保证了新策略具有较大的熵。过程如下图所示：</p>
+<p><img src="https://pic1.zhimg.com/80/v2-d5fa72ff00bb69449928fba1e6911a8a_1440w.webp" srcset="/img/loading.gif" lazyload style="zoom: 33%;" /></p>
+<h3 id="参数化的sac算法">4.2 参数化的SAC算法</h3>
+<p>类似Soft Q Learning，SAC也将价值函数 $V_{}(_{t}) $、 <span
+class="math inline">\(Q_{\theta}\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)\)</span> 和策略 <span
+class="math inline">\(\pi_{\phi}\left(\mathbf{a}_{t} \mid
+\mathbf{s}_{t}\right)\)</span> 参数化来表达连续域与方便优化。</p>
+<p>1）<strong>价值函数的优化</strong></p>
+<p>价值函数的优化都类似DQN算法，通过极小化Soft Bellman
+residual实现，下式中<span
+class="math inline">\(D\)</span>为回放缓冲区（Replay Buffer）：</p>
+<p>优化<span class="math inline">\(V\)</span>的目标函数：</p>
+<p><span class="math display">\[
+J_{V}(\psi)=\mathbb{E}_{\mathbf{s}_{t} \sim
+\mathcal{D}}\left[\frac{1}{2}\left(V_{\psi}\left(\mathbf{s}_{t}\right)-\mathbb{E}_{\mathbf{a}_{t}
+\sim \pi_{\phi}}\left[Q_{\theta}\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)-\log \pi_{\phi}\left(\mathbf{a}_{t} \mid
+\mathbf{s}_{t}\right)\right]\right)^{2}\right]
+\]</span></p>
+<p>随机梯度：</p>
+<p><span class="math display">\[
+\hat{\nabla}_{\psi} J_{V}(\psi)=\nabla_{\psi}
+V_{\psi}\left(\mathbf{s}_{t}\right)\left(V_{\psi}\left(\mathbf{s}_{t}\right)-Q_{\theta}\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)+\log \pi_{\phi}\left(\mathbf{a}_{t} \mid
+\mathbf{s}_{t}\right)\right)
+\]</span></p>
+<p>优化<span class="math inline">\(Q\)</span>的目标函数：</p>
+<p><span class="math display">\[
+J_{Q}(\theta)=\mathbb{E}_{\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right)
+\sim \mathcal{D}}\left[\frac{1}{2}\left(Q_{\theta}\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)-\hat{Q}\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)\right)^{2}\right]
+\]</span></p>
+<p>其中：</p>
+<p><span class="math display">\[
+\hat{Q}\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)=r\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)+\gamma \mathbb{E}_{\mathbf{s}_{t+1} \sim
+p}\left[V_{\bar{\psi}}\left(\mathbf{s}_{t+1}\right)\right]
+\]</span></p>
+<p>随机梯度：</p>
+<p><span class="math display">\[
+\hat{\nabla}_{\theta} J_{Q}(\theta)=\nabla_{\theta}
+Q_{\theta}\left(\mathbf{a}_{t},
+\mathbf{s}_{t}\right)\left(Q_{\theta}\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)-r\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)-\gamma
+V_{\bar{\psi}}\left(\mathbf{s}_{t+1}\right)\right)
+\]</span></p>
+<p>同样用到了target网络<span
+class="math inline">\(V_{\bar{\psi}}\)</span></p>
+<p>2）<strong>策略的优化</strong></p>
+<p><strong>同样用一个高斯分布通过KL散度近似玻尔兹曼分布：</strong> <span
+class="math display">\[
+J_{\pi}(\phi)=\mathbb{E}_{\mathbf{s}_{t} \sim
+\mathcal{D}}\left[\mathrm{D}_{\mathrm{KL}}\left(\pi_{\phi}\left(\cdot
+\mid \mathbf{s}_{t}\right) \| \frac{\exp
+\left(Q_{\theta}\left(\mathbf{s}_{t},
+\cdot\right)\right)}{Z_{\theta}\left(\mathbf{s}_{t}\right)}\right)\right]
+\]</span></p>
+<p>对此有两种好用的优化方法</p>
+<ul>
+<li><strong>策略梯度方法</strong>：SAC的策略梯度参考<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/503393367">这篇</a>，是可以推导出来的。</li>
+<li><strong>重参数化技巧，也是SAC实际运用的方法：</strong></li>
+</ul>
+<p><span class="math display">\[
+\begin{aligned}
+D_{KL}(p||q)&amp;=H(p,q)-H(p)
+\\ &amp;=- \sum_x p(x)\log q(x)- (-\sum_xp(x)\log p(x))
+\\ &amp;=- \sum_x p(x)(\log q(x)-\log p(x))
+\\ &amp;=- \sum_x p(x)\log \frac{q(x)}{p(x)}
+\end{aligned}
+\]</span></p>
+把策略的目标函数化简： $$
+<span class="math display">\[\begin{aligned}
+&amp;\underset{\phi}{\operatorname{minimize}} D_{K
+L}\left(\pi_\phi\left(\cdot \mid s_t\right) \|  \frac{\exp(\alpha
+^{-1}Q_\theta\left(s_t, a_t\right))}{\exp(\log
+\left(Z_\theta\left(s_t\right)\right))}\right)
+
+\\&amp;=\underset{\phi}{\operatorname{minimize}} D_{K
+L}\left(\pi_\phi\left(\cdot \mid s_t\right) \| \exp \left[\alpha
+^{-1}Q_\theta\left(s_t, a_t\right)-\log
+\left(Z_\theta\left(s_t\right)\right)\right]\right)
+
+\\ &amp;=\underset{\phi}{\operatorname{minimize}} \sum_{a_t}\left[\log
+\pi_\phi\left(a_t \mid s_t\right)-\alpha ^{-1}Q_\theta\left(s_t,
+a_t\right)+\log \left(Z_\theta\left(s_t\right)\right]\right.
+
+\\ &amp;=\underset{\phi}{\operatorname{minimize}} \underset{a_t \sim
+\pi_\phi\left(\cdot| s_t\right)}{\mathbb{E}}\left[\log \pi_\phi\left(a_t
+\mid s_t\right)-\alpha ^{-1}Q_\theta\left(s_t, a_t\right)+\log
+\left(Z_\theta\left(s_t\right)\right]\right.
+
+\\ &amp;=\underset{\phi}{\operatorname{minimize}} \underset{a_t \sim
+\pi_\phi\left(\cdot| s_t\right)}{\mathbb{E}}\left[\alpha \log
+\pi_\phi\left(a_t \mid s_t\right)-Q_\theta\left(s_t, a_t\right)\right]
+\\ \end{aligned}\]</span>
+<p>$$</p>
+<p><span class="math display">\[
+J_{\pi}(\phi)=E_{s_{t} \sim D, a_{t} \sim \pi_{\phi}}\left[\log
+_{\pi_{\phi}}\left(a_{t} \mid s_{t}\right)-\frac{1}{\alpha}
+Q_{\theta}\left(s_{t}, a_{t}\right)\right]
+\]</span></p>
+<p><strong>如果直接对其求策略梯度的话，是不能把直接对期望里面的项求梯度的，因为期望包含了策略，因此必须对期望进行解耦，使其与策略无关</strong>。</p>
+<p>直接把动作建模为取决于噪声分布和状态分布的网络：</p>
+<p><span class="math display">\[
+\mathbf{a}_{t}=f_{\phi}\left(\epsilon_{t} ; \mathbf{s}_{t}\right)
+\]</span></p>
+<p>其中$ _{t} $是取自诸如高斯分布的噪声。</p>
+<p>因此目标函数就变为：</p>
+<p><span class="math display">\[
+J_{\pi}(\phi)=\mathbb{E}_{\mathbf{s}_{t} \sim \mathcal{D}, \epsilon_{t}
+\sim \mathcal{N}}\left[\log \pi_{\phi}\left(f_{\phi}\left(\epsilon_{t} ;
+\mathbf{s}_{t}\right) \mid
+\mathbf{s}_{t}\right)-Q_{\theta}\left(\mathbf{s}_{t},
+f_{\phi}\left(\epsilon_{t} ; \mathbf{s}_{t}\right)\right)\right]
+\]</span></p>
+<p>可以看到期望里的噪声分布和策略参数解耦了</p>
+<p>因此就可以直接对其求梯度了，不用管期望里的分布了：</p>
+<p><span class="math display">\[
+\begin{aligned} \hat{\nabla}_{\phi} J_{\pi}(\phi)=\nabla_{\phi} \log
+\pi_{\phi}\left(\mathbf{a}_{t} \mid
+\mathbf{s}_{t}\right)d+\left(\nabla_{\mathbf{a}_{t}} \log
+\pi_{\phi}\left(\mathbf{a}_{t} \mid
+\mathbf{s}_{t}\right)-\nabla_{\mathbf{a}_{t}} Q\left(\mathbf{s}_{t},
+\mathbf{a}_{t}\right)\right) \nabla_{\phi} f_{\phi}\left(\epsilon_{t} ;
+\mathbf{s}_{t}\right) \end{aligned}
+\]</span></p>
+<blockquote>
+<p>注意，<strong>不用重参数化技巧也可以</strong>。如果直接对期望求梯度也是可以做的，那样就利用了策略梯度方法的思想。<br />
+重参数化技巧的额外好处是方差小，SAC用重参数化技巧其实是这个原因。</p>
+</blockquote>
+<h3 id="sac算法">4.3 SAC算法</h3>
+<p>SAC又从别的算法里抄了几个trick，比如TD3的双Q网络取最小、还有DQN的trick，不过这些都不重要。</p>
+<p>经过上面的分析，价值函数和策略的更新都了解了，可以写出算法了：</p>
+<p><img
+src="https://pic2.zhimg.com/v2-5c60331b84a610aef81ad3101ff2b2bb_b.jpg" srcset="/img/loading.gif" lazyload /></p>
+<p>SAC算法</p>
+<h2 id="sac2自动调整温度系数">5、SAC2：自动调整温度系数</h2>
+<p>SAC算法对于温度参数非常敏感，而调整热度参数是又比较困难——我们怎么确定在每一时刻用什么温度参数呢？只需要保证每一步的熵都不低于一个最小值就行了，即求解如下<a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E7%BA%A6%E6%9D%9F%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98&amp;zhida_source=entity&amp;is_preview=1">约束优化问题</a>：</p>
+<p><span class="math display">\[
+\max _{\pi_{0}, \ldots, \pi_{T}} \mathbb{E}\left[\sum_{t=0}^{T}
+r\left(s_{t}, a_{t}\right)\right] \text { s.t. } \forall t,
+\mathcal{H}\left(\pi_{t}\right) \geq \mathcal{H}_{0}
+\]</span></p>
+<p>因为在时刻t的策略不会影响到之前时刻的策略，我们可以用类似动态规划的思想从后往前逐步最大化收益：</p>
+<p><span class="math display">\[
+\max _{\pi 0}\left(\mathbb{E}\left[r\left(s_{0},
+a_{0}\right)\right]+\max _{\pi_{1}}\left(\mathbb{E}[\ldots]+\max
+_{\pi_{T}} \mathbb{E}\left[r\left(s_{T},
+a_{T}\right)\right]\right)\right)
+\]</span></p>
+<p>我们从最后一个时刻T开始最大化：</p>
+<p><span class="math display">\[
+\mathbb{E}_{\left(s_{T}, a_{T}\right) \sim
+\rho_{\pi}}\left[r\left(s_{T}, a_{T}\right)\right] \text { s.t. }
+\mathcal{H}\left(\pi_{T}\right)-\mathcal{H}_{0} \geq 0
+\]</span></p>
+<p>要求解这个问题，需要用到拉格朗日对偶的方法。</p>
+<blockquote>
+<p>拉格朗日对偶这个写的非常好：<a
+href="https://link.zhihu.com/?target=https%3A//cs.stanford.edu/people/davidknowles/lagrangian_duality.pdf">笨蛋都能看懂的拉格朗日对偶</a><br />
+知道了拉格朗日对偶的做法，就可以继续下面的推导啦</p>
+</blockquote>
+<p>首先，我们定义以下函数：</p>
+<p><span class="math display">\[
+\begin{aligned} h\left(\pi_{T}\right)
+&amp;=\mathcal{H}\left(\pi_{T}\right)-\mathcal{H}_{0}=\mathbb{E}_{\left(s_{T},
+a_{T}\right) \sim \rho_{\pi}}\left[-\log \pi_{T}\left(a_{T} \mid
+s_{T}\right)\right]-\mathcal{H}_{0} \\ f\left(\pi_{T}\right) &amp;=
+\begin{cases}\mathbb{E}_{\left(s_{T}, a_{T}\right) \sim
+\rho_{\pi}}\left[r\left(s_{T}, a_{T}\right)\right], &amp; \text { if }
+h\left(\pi_{T}\right) \geq 0 \\ -\infty, &amp; \text { otherwise
+}\end{cases} \end{aligned}
+\]</span></p>
+<p>于是优化问题就变成了：</p>
+<p><span class="math display">\[
+f\left(\pi_{T}\right) \text { s.t. } h\left(\pi_{T}\right) \geq 0
+\]</span></p>
+<p>为了解决这个不等式约束的最大化优化问题，我们可以构建一个带有<a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E4%B9%98%E5%AD%90&amp;zhida_source=entity&amp;is_preview=1">拉格朗日乘子</a>的表达式：</p>
+<p><span class="math display">\[
+L\left(\pi_{T}, \alpha_{T}\right)=f\left(\pi_{T}\right)+\alpha_{T}
+h\left(\pi_{T}\right)
+\]</span></p>
+<p>实际上，目标函数就等价于最小化L的<span
+class="math inline">\(\alpha\)</span>的式子：</p>
+<p><span class="math display">\[
+f\left(\pi_{T}\right)=\min _{\alpha_{T} \geq 0} L\left(\pi_{T},
+\alpha_{T}\right)
+\]</span></p>
+<p>这样写的原因如下：</p>
+<ul>
+<li>如果约束被满足，那么 <span class="math inline">\(\alpha\)</span>
+最好将其设置为0才能让L最小（注意 $ $ ）。于是。</li>
+<li>如果约束被违背了，即，我们可以通过令<span
+class="math inline">\(\alpha_{T} \rightarrow \infty\)</span>来使得$
+L(<em>{T}, </em>{T}) -<span
+class="math inline">\(。于是\)</span>L(<em>{T}, )=-=f(</em>{T})$。</li>
+</ul>
+<p><strong>上面这个min仅仅代表的是约束条件的满足</strong></p>
+<p><strong>为了最大化目标函数还需要一个max的操作：</strong> <span
+class="math display">\[
+\max _{\pi_{T}} f\left(\pi_{T}\right)=\max _{\pi_{T}}\min _{\alpha_{T}
+\geq 0} L\left(\pi_{T}, \alpha_{T}\right)
+\]</span> 现在把它变成更好处理的对偶问题：</p>
+<p><span class="math display">\[
+\begin{aligned} \max _{\pi_{T}} \mathbb{E}\left[r\left(s_{T},
+a_{T}\right)\right] &amp;=\max _{\pi_{T}} f\left(\pi_{T}\right) \\
+&amp;=\min _{\alpha_{T} \geq 0} \max _{\pi_{T}} L\left(\pi_{T},
+\alpha_{T}\right) \\ &amp;=\min _{\alpha_{T} \geq 0} \max _{\pi_{T}}
+f\left(\pi_{T}\right)+\alpha_{T} h\left(\pi_{T}\right) \\ &amp;=\min
+_{\alpha_{T} \geq 0} \max _{\pi_{T}} \mathbb{E}_{\left(s_{T},
+a_{T}\right) \sim \rho_{\pi}}\left[r\left(s_{T},
+a_{T}\right)\right]+\alpha_{T}\left(\mathbb{E}_{\left(s_{T},
+a_{T}\right) \sim \rho_{\pi}}\left[-\log \pi_{T}\left(a_{T} \mid
+s_{T}\right)\right]-\mathcal{H}_{0}\right) \\ &amp;=\min _{\alpha_{T}
+\geq 0} \max _{\pi_{T}} \mathbb{E}_{\left(s_{T}, a_{T}\right) \sim
+\rho_{\pi}}\left[r\left(s_{T}, a_{T}\right)-\alpha_{T} \log
+\pi_{T}\left(a_{T} \mid s_{T}\right)\right]-\alpha_{T} \mathcal{H}_{0}
+\\ &amp;=\min _{\alpha_{T} \geq 0} \max _{\pi_{T}}
+\mathbb{E}_{\left(s_{T}, a_{T}\right) \sim
+\rho_{\pi}}\left[r\left(s_{T}, a_{T}\right)+\alpha_{T}
+\mathcal{H}\left(\pi_{T}\right)-\alpha_{T} \mathcal{H}_{0}\right]
+\end{aligned}
+\]</span></p>
+<blockquote>
+<p>由于目标函数是线性的，熵约束是<a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E5%87%B8%E5%87%BD%E6%95%B0&amp;zhida_source=entity&amp;is_preview=1">凸函数</a>，所以强对偶性成立。<br />
+这意味着对偶问题的最优解等于原始问题的最优解。</p>
+</blockquote>
+<p>所以最优策略和最优温度系数都可以表示出来了：</p>
+<p><span class="math display">\[
+\begin{aligned} &amp;\pi_{T}^{\star}=\arg \max _{\pi_{T}}
+\mathbb{E}_{\left(s_{T}, a_{T}\right) \sim \rho_{\pi}}\left[\left(s_{T},
+a_{T}\right)+\alpha_{T} \mathcal{H}\left(\pi_{T}\right)-\alpha_{T}
+\mathcal{H}_{0}\right] \\ &amp;\alpha_{T}^{\star}=\arg \min _{\alpha_{T}
+\geq 0} \mathbb{E}_{\left(s_{T}, a_{T}\right) \sim
+\rho_{\pi^{\star}}}\left[\alpha_{T}
+\mathcal{H}\left(\pi_{T}^{\star}\right)-\alpha_{T}
+\mathcal{H}_{0}\right] \end{aligned}
+\]</span></p>
+<p>所以目标函数的最大化完全可以用最优策略和温度系数表示：</p>
+<p><span class="math display">\[
+\max _{\pi_{T}} \mathbb{E}\left[r\left(s_{T},
+a_{T}\right)\right]=\mathbb{E}_{\left(s_{T}, a_{T}\right) \sim
+\rho_{\pi^{\star}}}\left[r\left(s_{T}, a_{T}\right)+\alpha_{T}^{\star}
+\mathcal{H}\left(\pi_{T}^{\star}\right)-\alpha_{T}^{\star}
+\mathcal{H}_{0}\right]
+\]</span></p>
+<p>把这个思想用到Q函数中，那么Q函数也可以这么表示：</p>
+<p><span class="math display">\[
+\begin{aligned} Q_{T-1}\left(s_{T-1}, a_{T-1}\right)
+&amp;=r\left(s_{T-1}, a_{T-1}\right)+\mathbb{E}\left[Q\left(s_{T},
+a_{T}\right)-\alpha_{T} \log \pi\left(a_{T} \mid s_{T}\right)\right] \\
+&amp;=r\left(s_{T-1}, a_{T-1}\right)+\mathbb{E}\left[r\left(s_{T},
+a_{T}\right)\right]+\alpha_{T} \mathcal{H}\left(\pi_{T}\right) \\
+Q_{T-1}^{\star}\left(s_{T-1}, a_{T-1}\right) &amp;=r\left(s_{T-1},
+a_{T-1}\right)+\max _{\pi_{T}} \mathbb{E}\left[r\left(s_{T},
+a_{T}\right)\right]+\alpha_{T}^{\star}
+\mathcal{H}\left(\pi_{T}^{\star}\right) \end{aligned}
+\]</span>
+因此,回溯到T-1步，把最优Q的式子带进去，形成了另一个约束优化问题</p>
+<p><span class="math display">\[
+\begin{aligned} &amp;\max
+_{\pi_{T-1}}\left(\mathbb{E}\left[r\left(s_{T-1},
+a_{T-1}\right)\right]+\max _{\pi_{T}} \mathbb{E}\left[r\left(s_{T},
+a_{T}\right]\right)\right. \\ &amp;=\max
+_{\pi_{T-1}}\left(Q_{T-1}^{\star}\left(s_{T-1},
+a_{T-1}\right)-\alpha_{T}^{\star}
+\mathcal{H}\left(\pi_{T}^{\star}\right)\right),s.t.\mathcal{H}\left(\pi_{T-1}\right)-\mathcal{H}_{0}
+\geq 0 \end{aligned}
+\]</span></p>
+<p>同样使用拉格朗日对偶：</p>
+<p><span class="math display">\[
+\begin{aligned} &amp;\max
+_{\pi_{T-1}}\left(\mathbb{E}\left[r\left(s_{T-1},
+a_{T-1}\right)\right]+\max _{\pi_{T}} \mathbb{E}\left[r\left(s_{T},
+a_{T}\right]\right)\right. \\ &amp;=\max
+_{\pi_{T-1}}\left(Q_{T-1}^{\star}\left(s_{T-1},
+a_{T-1}\right)-\alpha_{T}^{\star}
+\mathcal{H}\left(\pi_{T}^{\star}\right)\right) \\ &amp;=\min
+_{\alpha_{T-1} \geq 0} \max
+_{\pi_{T-1}}\left(Q_{T-1}^{\star}\left(s_{T-1},
+a_{T-1}\right)-\alpha_{T}^{\star}
+\mathcal{H}\left(\pi_{T}^{\star}\right)+\alpha_{T-1}\left(\mathcal{H}\left(\pi_{T-1}\right)-\mathcal{H}_{0}\right)\right)
+\\ &amp;=\min _{\alpha_{T-1} \geq 0} \max
+_{\pi_{T-1}}\left(Q_{T-1}^{\star}\left(s_{T-1},
+a_{T-1}\right)+\alpha_{T-1}
+\mathcal{H}\left(\pi_{T-1}\right)-\alpha_{T-1}
+\mathcal{H}_{0}\right)-\alpha_{T}^{\star}
+\mathcal{H}\left(\pi_{T}^{\star}\right) \end{aligned}
+\]</span> 类似的，也可以得到T-1步的最优策略和最优温度系数：</p>
+<p><span class="math display">\[
+\begin{aligned} \pi_{T-1}^{\star} &amp;=\arg \max _{\pi_{T-1}}
+\mathbb{E}_{\left(s_{T-1} a_{T-1}\right) \sim
+\rho_{\pi}}\left[Q_{T-1}^{\star}\left(s_{T-1},
+a_{T-1}\right)+\alpha_{T-1}
+\mathcal{H}\left(\pi_{T-1}\right)-\alpha_{T-1} \mathcal{H}_{0}\right] \\
+\alpha_{T-1}^{\star} &amp;=\arg \min _{\alpha_{T-\mathbb{Z}}}
+\mathbb{E}_{\left(s_{T-1} a_{T-1}\right) \sim
+\rho_{\pi^{\star}}}\left[\alpha_{T-1}
+\mathcal{H}\left(\pi_{T-1}^{\star}\right)-\alpha_{T-1}
+\mathcal{H}_{0}\right] \end{aligned}
+\]</span></p>
+<p>于是，在每一步我们都能够最小化以下目标函数以求解温度系数：</p>
+<p><span class="math display">\[
+J(\alpha)=\mathbb{E}_{a_{t} \sim \pi_{t}}\left[-\alpha \log
+\pi_{t}\left(a_{t} \mid \pi_{t}\right)-\alpha \mathcal{H}_{0}\right]
+\]</span></p>
+<p>并得到最优温度系数：</p>
+<p><span class="math display">\[
+\alpha_{t}^{*}=\arg \min _{\alpha_{t}} \mathbb{E}_{\mathbf{a}_{t} \sim
+\pi_{t}^{*}}\left[-\alpha_{t} \log \pi_{t}^{*}\left(\mathbf{a}_{t} \mid
+\mathbf{s}_{t} ; \alpha_{t}\right)-\alpha_{t}
+\overline{\mathcal{H}}\right]
+\]</span></p>
+<p>综上，把熵的自动求解放入SAC中，就形成了SAC2算法：</p>
+<p><img
+src="https://pic1.zhimg.com/v2-562d7f3a5bced03cec813668ab178eac_b.jpg" srcset="/img/loading.gif" lazyload /></p>
+<p>SAC2</p>
+<h2 id="sac-离散">6、SAC-离散</h2>
+<p>SAC当然是一个很好的想法，在很多连续动作空间的任务上都达到了SOTA，不过并不是很适合离散动作空间。</p>
+<p>为了适应离散动作空间，必须要做出以下五个改变：</p>
+<ul>
+<li><strong>Q函数输出所有的状态动作</strong>。这在连续状态空间是不可能的，因为动作是连续的。在离散动作空间中这种情况就成为了提高效率的一种可能方法。</li>
+<li><strong>策略函数不输出均值和方差，直接输出动作分布</strong>。这是离散动作空间的必然要求。</li>
+<li><strong>对求V动作的期望改成积分</strong>。之前求V的时候需要对动作求期望：$V(s_{t}):=E_{a_{t}
+}<span
+class="math inline">\(，不过在离散动作空间，所有动作的积分是可以求得的，因此变期望为积分以减少方差：\)</span>V(s_{t}):=(s_{t})^{T}$</li>
+<li><strong>同样的，对温度系数的动作期望改成积分</strong>。<span
+class="math inline">\(J(\alpha)=\pi_{t}\left(s_{t}\right)^{T}\left[-\alpha\left(\log
+\left(\pi_{t}\left(s_{t}\right)\right)+\bar{H}\right)\right]\)</span></li>
+<li><strong>去掉重参数化</strong>。之前使用重参数化的一个原因是期望里带动作分布，因此梯度不能从期望外直接提到期望内。但是现在动作已经变成积分/求和形式了，每个动作都能直接计算出来，因此可以直接对以下目标函数求梯度：<span
+class="math inline">\(J_{\pi}(\phi)=E_{s_{t} \sim
+D}\left[\pi_{t}\left(s_{t}\right)^{T}\left[\alpha \log
+\left(\pi_{\phi}\left(s_{t}\right)\right)-Q_{\theta}\left(s_{t}\right)\right]\right]\)</span></li>
+</ul>
+<p>这五点构成了离散SAC算法：</p>
+<p><img
+src="https://pic3.zhimg.com/v2-1c5c687228798d928f0c5ce178fef97e_b.jpg" srcset="/img/loading.gif" lazyload /></p>
+<p>离散SAC</p>
+<h1 id="参考">参考</h1>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/557418338">从Soft Q
+Learning到SAC - 知乎 (zhihu.com)</a></p>
+<script src="https://utteranc.es/client.js"
+        repo="Antonalia/antonalia.github.io"
+        issue-term="pathname"
+        label="comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" class="category-chain-item">强化学习</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/SAC%E7%AE%97%E6%B3%95/" class="print-no-link">#SAC算法</a>
+      
+        <a href="/tags/Actor-Critic%E7%AE%97%E6%B3%95/" class="print-no-link">#Actor-Critic算法</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>SAC算法</div>
+      <div>http://example.com/04SAC/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>仓鼠小乐</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年9月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/05property-function/" title="Python中property和@property的应用">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Python中property和@property的应用</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/03normalization/" title="归一化、标准化、正则化">
+                        <span class="hidden-mobile">归一化、标准化、正则化</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div>
+<a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/Snowflake.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
+
+<!--单击显示文字-->
+<script type="text/javascript" src="/js/click_show_text.js"></script>
+
+
+
