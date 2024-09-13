@@ -1,17 +1,17 @@
-function snowFall(t) {
+ function snowFall(t) {
     t = t || {};
     this.maxFlake = Math.floor((window.innerWidth + window.innerHeight) / 5)*0.2;
     this.flakeSize = t.flakeSize || 5;
-    this.fallSpeed = t.fallSpeed || 2;
+    this.fallSpeed = (t.fallSpeed || 1);
     this.lineWidth = t.lineWidth || 0.5;
-    this.windForce = t.windForce || 0;
+    this.windForce = t.windForce || -0.01; // 风力大小
     this.windDirection = t.windDirection || Math.PI / 180 * 45;
 }
 
 function snowCanvas() {
     var canvas = document.createElement("canvas");
     canvas.id = "snowfall";
-    canvas.width = window.innerWidth;
+    canvas.width = window.innerWidth*2; // 设置画布宽度为窗口宽度的两倍
     canvas.height = window.innerHeight;
     canvas.setAttribute("style", "position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none;");
     document.getElementsByTagName("body")[0].appendChild(canvas);
@@ -19,7 +19,7 @@ function snowCanvas() {
     this.ctx = canvas.getContext("2d");
 
     window.onresize = function () {
-        canvas.width = window.innerWidth;
+        canvas.width = window.innerWidth*2; // 在窗口大小变化时，更新画布宽度为窗口宽度的两倍
         canvas.height = window.innerHeight;
     };
 }
@@ -43,7 +43,8 @@ flakeMove.prototype.update = function () {
     this.velX += Math.cos(this.windDirection) * this.windForce;
     this.velX *= 0.98;
     this.velY <= this.speed && (this.velY = this.speed);
-    this.velX += Math.cos(this.step += 0.05) * this.stepSize;
+    // this.velX += Math.cos(this.step += 0.05) * this.stepSize; // 雪花个体的左右摆动
+    // this.velX += Math.cos(this.step*Math.random()*this.windForce) * this.stepSize;
     this.y += this.velY;
     this.x += this.velX;
 
@@ -93,11 +94,12 @@ snowFall.prototype.start = function () {
     drawSnow.call(this);
 };
 
+// 在这调整参数
 var snow = new snowFall({
-    flakeSize: 5,
-    fallSpeed: 1,
+    flakeSize: 7,
+    fallSpeed: 0.5,
     lineWidth: 0.5,
-    windForce: 0,
+    windForce: -0.015,
     windDirection: Math.PI / 180 * 45
 });
 

@@ -835,7 +835,7 @@ i.iconfont {
 }
 :root {
   --color-mode: "light";
-  --body-bg-color: #e0e0e0;
+  --body-bg-color: #eee;
   --board-bg-color: #fff;
   --text-color: #3c4858;
   --sec-text-color: #718096;
@@ -862,7 +862,7 @@ i.iconfont {
     --color-mode: "dark";
   }
   :root:not([data-user-color-scheme]) {
-    --body-bg-color: #111634;
+    --body-bg-color: #181c27;
     --board-bg-color: #252d38;
     --text-color: #c4c6c9;
     --sec-text-color: #a7a9ad;
@@ -900,7 +900,7 @@ i.iconfont {
 }
 @media not print {
   [data-user-color-scheme="dark"] {
-    --body-bg-color: #111634;
+    --body-bg-color: #181c27;
     --board-bg-color: #252d38;
     --text-color: #c4c6c9;
     --sec-text-color: #a7a9ad;
@@ -2012,14 +2012,13 @@ input[type=checkbox] {
   border-radius: 50%;
   background-color: transparent;
   object-fit: cover;
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.11), 0 2px 10px 0 #000;
   transition: all 1.7s;
+  animation: shadowBlink 4s infinite;
 }
 .img-fluid:hover {
   background-color: #0ff;
-  -webkit-box-shadow: 10px 10px 99px 6px #b9e769;
-  -moz-box-shadow: 10px 10px 99px 6px #b9e769;
-  box-shadow: 10px 10px 99px 6px #b9e769;
+  -webkit-box-shadow: 0px 0px 10px 10px rgba(255,255,255,0.7);
   transform: rotate(360deg);
   -webkit-transform: rotate(360deg);
   -moz-transform: rotate(360deg);
@@ -2041,6 +2040,50 @@ input[type=checkbox] {
 }
 .about-icons > a > i {
   font-size: 1.5rem;
+}
+@-moz-keyframes shadowBlink {
+  0% {
+    box-shadow: 0px 0px 70px 6px #e6e65a; /* 初始阴影 */
+  }
+  50% {
+    box-shadow: 0px 0px 70px 6px rgba(230,230,90,0.3); /* 闪烁时的半透明阴影 */
+  }
+  100% {
+    box-shadow: 0px 0px 70px 6px #e6e65a; /* 回到初始阴影 */
+  }
+}
+@-webkit-keyframes shadowBlink {
+  0% {
+    box-shadow: 0px 0px 70px 6px #e6e65a; /* 初始阴影 */
+  }
+  50% {
+    box-shadow: 0px 0px 70px 6px rgba(230,230,90,0.3); /* 闪烁时的半透明阴影 */
+  }
+  100% {
+    box-shadow: 0px 0px 70px 6px #e6e65a; /* 回到初始阴影 */
+  }
+}
+@-o-keyframes shadowBlink {
+  0% {
+    box-shadow: 0px 0px 70px 6px #e6e65a; /* 初始阴影 */
+  }
+  50% {
+    box-shadow: 0px 0px 70px 6px rgba(230,230,90,0.3); /* 闪烁时的半透明阴影 */
+  }
+  100% {
+    box-shadow: 0px 0px 70px 6px #e6e65a; /* 回到初始阴影 */
+  }
+}
+@keyframes shadowBlink {
+  0% {
+    box-shadow: 0px 0px 70px 6px #e6e65a; /* 初始阴影 */
+  }
+  50% {
+    box-shadow: 0px 0px 70px 6px rgba(230,230,90,0.3); /* 闪烁时的半透明阴影 */
+  }
+  100% {
+    box-shadow: 0px 0px 70px 6px #e6e65a; /* 回到初始阴影 */
+  }
 }
 .category-bar .category-list {
   max-height: 85vh;
