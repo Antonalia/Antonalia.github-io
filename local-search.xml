@@ -4,6 +4,60 @@
   
   
   <entry>
+    <title>Hexo+Fluid中Onblur事件，离开页面时的标题显示</title>
+    <link href="/09Fluid-Onblur/"/>
+    <url>/09Fluid-Onblur/</url>
+    
+    <content type="html"><![CDATA[<p>在博客配置下的hexo-blog_inject中，若是没有文件夹则新建，然后在其中新建<code>monitortext.ejs</code>,用于向页面中添加焦点监控代码。</p><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs css">&lt;% if(theme<span class="hljs-selector-class">.fun_features</span><span class="hljs-selector-class">.monitortext</span><span class="hljs-selector-class">.enable</span>) &#123; %&gt;<br>&lt;script type=&quot;<span class="hljs-selector-tag">text</span>/javascript&quot;&gt;<br>  <span class="hljs-comment">/*窗口监视*/</span><br>  <span class="hljs-selector-tag">var</span> originalTitle = document<span class="hljs-selector-class">.title</span>;<br>  window<span class="hljs-selector-class">.onblur</span> = function()&#123;document<span class="hljs-selector-class">.title</span> = &quot;&lt;%- theme<span class="hljs-selector-class">.fun_features</span><span class="hljs-selector-class">.monitortext</span><span class="hljs-selector-class">.text</span> %&gt;&quot;&#125;;<br>  window<span class="hljs-selector-class">.onfocus</span> = function()&#123;document<span class="hljs-selector-class">.title</span> = originalTitle&#125;;<br>&lt;/script&gt;<br>  &lt;% &#125; %&gt;<br></code></pre></td></tr></table></figure><p>然后在hexo-blog<code>page.js</code>文件，添加以下代码。也可以在官网找到具体描述<ahref="https://hexo.fluid-dev.com/docs/advance/#hexo-注入代码">进阶用法 |Hexo Fluid 用户手册 (fluid-dev.com)</a>。</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// 添加页面焦点监控文字</span><br>hexo.<span class="hljs-property">extend</span>.<span class="hljs-property">filter</span>.<span class="hljs-title function_">register</span>(<span class="hljs-string">&#x27;theme_inject&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">injects</span>) &#123;<br>    <span class="hljs-comment">// 添加页面焦点监控文字(here)</span><br>    injects.<span class="hljs-property">bodyBegin</span>.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;monitortext&#x27;</span>, <span class="hljs-string">&quot;source/_inject/monitortext.ejs&quot;</span>);<br>  &#125;);<br></code></pre></td></tr></table></figure><p>最后编辑主题配置文件，即hexo-blog<code>_config.yml</code>文件，在<code>fun_features</code> 项下添加：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs js"># 一些好玩的功能<br># <span class="hljs-title class_">Some</span> fun features<br><span class="hljs-attr">fun_features</span>:<br>  # 监控网页焦点，改变文字<br>  <span class="hljs-attr">monitortext</span>:<br>    <span class="hljs-attr">enable</span>: <span class="hljs-literal">true</span><br>    <span class="hljs-attr">text</span>: 你想添加的文字<br><br>  # 为 subtitle 添加打字机效果<br>  # <span class="hljs-title class_">Typing</span> animation <span class="hljs-keyword">for</span> subtitle<br>  <span class="hljs-attr">typing</span>:<br>    <span class="hljs-attr">enable</span>: <span class="hljs-literal">true</span><br><br></code></pre></td></tr></table></figure><h2 id="参考">参考</h2><p>1、https://alec-97.github.io/posts/3644508848/ 2、<ahref="https://hexo.fluid-dev.com/docs/advance/#hexo-注入代码">进阶用法 |Hexo Fluid 用户手册 (fluid-dev.com)</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>博客</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Hexo</tag>
+      
+      <tag>Fluid</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Hexo+Fluid中头像旋转呼吸发光的实现</title>
+    <link href="/08avatar-rotation/"/>
+    <url>/08avatar-rotation/</url>
+    
+    <content type="html"><![CDATA[<p>将以下代码复制到主题配置的hexo-blog_pages_about.styl中<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-class">.about-avatar</span><br>  <span class="hljs-attribute">position</span> relative<br>  <span class="hljs-attribute">margin</span> -<span class="hljs-number">8rem</span> auto <span class="hljs-number">1rem</span><br>  <span class="hljs-attribute">width</span> <span class="hljs-number">10rem</span><br>  <span class="hljs-attribute">height</span> <span class="hljs-number">10rem</span><br>  <span class="hljs-attribute">z-index</span> <span class="hljs-number">3</span><br><br>  <span class="hljs-selector-tag">img</span><br>    <span class="hljs-attribute">width</span> <span class="hljs-number">100%</span><br>    <span class="hljs-attribute">height</span> <span class="hljs-number">100%</span><br>    <span class="hljs-attribute">border-radius</span> <span class="hljs-number">50%</span><br>    <span class="hljs-attribute">background-color</span> transparent<br>    <span class="hljs-attribute">object-fit</span> cover<br>    <span class="hljs-attribute">box-shadow</span> <span class="hljs-number">0</span> <span class="hljs-number">2px</span> <span class="hljs-number">5px</span> <span class="hljs-number">0</span> rgba(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>, <span class="hljs-number">0.11</span>), <span class="hljs-number">0</span> <span class="hljs-number">2px</span> <span class="hljs-number">10px</span> <span class="hljs-number">0</span> rgba(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>) // 头像框周围黑色包裹线条<br><br>    <span class="hljs-attribute">transition</span>: all <span class="hljs-number">1.7s</span><br>    <br>    animation: shadowBlink <span class="hljs-number">4s</span> infinite; // 一次闪烁的时间<br><span class="hljs-selector-class">.img-fluid</span><span class="hljs-selector-pseudo">:hover</span> &#123;<br>  <span class="hljs-attribute">background-color</span>: <span class="hljs-number">#00FFFF</span>;<br>  -webkit-<span class="hljs-attribute">box-shadow</span>: <span class="hljs-number">0px</span> <span class="hljs-number">0px</span> <span class="hljs-number">10px</span> <span class="hljs-number">10px</span> <span class="hljs-built_in">rgba</span>(<span class="hljs-number">255</span>,<span class="hljs-number">255</span>,<span class="hljs-number">255</span>, <span class="hljs-number">0.7</span>);<br>  // <span class="hljs-attribute">box-shadow</span>: <span class="hljs-number">0px</span> <span class="hljs-number">0px</span> <span class="hljs-number">70px</span> <span class="hljs-number">6px</span> <span class="hljs-built_in">rgba</span>(<span class="hljs-number">230</span>, <span class="hljs-number">230</span>, <span class="hljs-number">90</span>, <span class="hljs-number">1</span>); // 旋转时的发光阴影，分别是水平偏移、垂直偏移、模糊半径（羽化颜色）、阴影尺寸(实心颜色)和RGBA颜色<br><br>     <span class="hljs-attribute">transform</span>: <span class="hljs-built_in">rotate</span>(<span class="hljs-number">360deg</span>);<br>     -webkit-<span class="hljs-attribute">transform</span>: <span class="hljs-built_in">rotate</span>(<span class="hljs-number">360deg</span>);<br>     -moz-<span class="hljs-attribute">transform</span>: <span class="hljs-built_in">rotate</span>(<span class="hljs-number">360deg</span>);<br>     -o-<span class="hljs-attribute">transform</span>: <span class="hljs-built_in">rotate</span>(<span class="hljs-number">360deg</span>);<br>     -ms-<span class="hljs-attribute">transform</span>: <span class="hljs-built_in">rotate</span>(<span class="hljs-number">360deg</span>);<br>&#125;<br><span class="hljs-keyword">@keyframes</span> shadowBlink &#123;<br>  <span class="hljs-number">0%</span> &#123;<br>    <span class="hljs-attribute">box-shadow</span>: <span class="hljs-number">0px</span> <span class="hljs-number">0px</span> <span class="hljs-number">70px</span> <span class="hljs-number">6px</span> <span class="hljs-built_in">rgba</span>(<span class="hljs-number">230</span>, <span class="hljs-number">230</span>, <span class="hljs-number">90</span>, <span class="hljs-number">1</span>); <span class="hljs-comment">/* 初始阴影 */</span><br>  &#125;<br>  <span class="hljs-number">50%</span> &#123;<br>    <span class="hljs-attribute">box-shadow</span>: <span class="hljs-number">0px</span> <span class="hljs-number">0px</span> <span class="hljs-number">70px</span> <span class="hljs-number">6px</span> <span class="hljs-built_in">rgba</span>(<span class="hljs-number">230</span>, <span class="hljs-number">230</span>, <span class="hljs-number">90</span>, <span class="hljs-number">0.3</span>); <span class="hljs-comment">/* 闪烁时的半透明阴影 */</span><br>  &#125;<br>  <span class="hljs-number">100%</span> &#123;<br>    <span class="hljs-attribute">box-shadow</span>: <span class="hljs-number">0px</span> <span class="hljs-number">0px</span> <span class="hljs-number">70px</span> <span class="hljs-number">6px</span> <span class="hljs-built_in">rgba</span>(<span class="hljs-number">230</span>, <span class="hljs-number">230</span>, <span class="hljs-number">90</span>, <span class="hljs-number">1</span>); <span class="hljs-comment">/* 回到初始阴影 */</span><br>  &#125;<br>&#125;<br><br><span class="hljs-selector-class">.about-info</span><br>  &amp; &gt; <span class="hljs-selector-tag">div</span><br>    <span class="hljs-attribute">margin-bottom</span> .<span class="hljs-number">5rem</span><br><br><span class="hljs-selector-class">.about-name</span><br>  <span class="hljs-attribute">font-size</span> <span class="hljs-number">1.75rem</span><br>  <span class="hljs-attribute">font-weight</span> bold<br><br><span class="hljs-selector-class">.about-intro</span><br>  <span class="hljs-attribute">font-size</span> <span class="hljs-number">1rem</span><br><br><span class="hljs-selector-class">.about-icons</span><br>  &amp; &gt; <span class="hljs-selector-tag">a</span><span class="hljs-selector-pseudo">:not</span>(<span class="hljs-selector-pseudo">:last-child</span>)<br>    <span class="hljs-attribute">margin-right</span> .<span class="hljs-number">5rem</span><br><br>  &amp; &gt; <span class="hljs-selector-tag">a</span> &gt; <span class="hljs-selector-tag">i</span><br>    <span class="hljs-attribute">font-size</span> <span class="hljs-number">1.5rem</span><br><br></code></pre></td></tr></table></figure></p><h2 id="参考">参考</h2><p>1、<ahref="https://www.zzzwb.com/2023/09-27-css002.html#:~:text=fluid主题设置关">fluid主题设置关于页头像图片鼠标悬停360°旋转效果- Wenbin's blog (zzzwb.com)</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>博客</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Hexo</tag>
+      
+      <tag>Fluid</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Python中super()函数的应用</title>
     <link href="/07super/"/>
     <url>/07super/</url>
@@ -137,7 +191,7 @@
   
   
   <entry>
-    <title>hexo和fluid的安装教程</title>
+    <title>个人博客人 Hexo和Fluid的安装教程</title>
     <link href="/02hexo-fluid-install/"/>
     <url>/02hexo-fluid-install/</url>
     
@@ -153,7 +207,9 @@
     
     <tags>
       
-      <tag>hexo</tag>
+      <tag>Hexo</tag>
+      
+      <tag>Fluid</tag>
       
     </tags>
     

@@ -19,23 +19,23 @@
   <meta name="author" content="仓鼠小乐">
   <meta name="keywords" content="">
   
-    <meta name="description" content="介绍子类访问父类的方法">
+    <meta name="description" content="Hexo采用Fluid主题，关于页头像会呼吸间歇发光，鼠标悬浮在头像上时头像会旋转">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Python中super()函数的应用">
-<meta property="og:url" content="http://example.com/07super/index.html">
+<meta property="og:title" content="Hexo+Fluid中头像旋转呼吸发光的实现">
+<meta property="og:url" content="http://example.com/08avatar-rotation/index.html">
 <meta property="og:site_name" content="仓鼠小乐的个人博客">
-<meta property="og:description" content="介绍子类访问父类的方法">
+<meta property="og:description" content="Hexo采用Fluid主题，关于页头像会呼吸间歇发光，鼠标悬浮在头像上时头像会旋转">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-09-11T08:24:31.971Z">
-<meta property="article:modified_time" content="2024-09-11T09:12:05.188Z">
+<meta property="article:published_time" content="2024-09-16T12:50:20.154Z">
+<meta property="article:modified_time" content="2024-09-16T13:15:55.374Z">
 <meta property="article:author" content="仓鼠小乐">
-<meta property="article:tag" content="python">
-<meta property="article:tag" content="python语法">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="Fluid">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>Python中super()函数的应用 - 仓鼠小乐的个人博客</title>
+  <title>Hexo+Fluid中头像旋转呼吸发光的实现 - 仓鼠小乐的个人博客</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -226,7 +226,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Python中super()函数的应用"></span>
+            <span id="subtitle" data-typed-text="Hexo+Fluid中头像旋转呼吸发光的实现"></span>
           
         </div>
 
@@ -242,8 +242,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-09-11 16:24" pubdate>
-          2024年9月11日 下午
+        <time datetime="2024-09-16 20:50" pubdate>
+          2024年9月16日 晚上
         </time>
       </span>
     
@@ -254,7 +254,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          458 字
+          253 字
         
       </span>
     
@@ -265,7 +265,7 @@
         
         
         
-          4 分钟
+          3 分钟
         
       </span>
     
@@ -302,12 +302,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Python中super()函数的应用</h1>
+            <h1 id="seo-header">Hexo+Fluid中头像旋转呼吸发光的实现</h1>
             
               <p id="updated-time" class="note note-info" style="">
                 
                   
-                    本文最后更新于 2024年9月11日 下午
+                    本文最后更新于 2024年9月16日 晚上
                   
                 
               </p>
@@ -315,25 +315,12 @@
             
               <div class="markdown-body">
                 
-                <h2 id="类的分类经典类和新式类">类的分类:经典类和新式类</h2>
-<p>在py2中有经典类和新式类的区别：
-新式类：继承了object类的子类，以及该子类的子类，子子类
-经典类：没有继承object类的子类，以及该子类的子类，子子类 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#python2中</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Father</span>:<br>    <span class="hljs-keyword">pass</span>     <span class="hljs-comment"># 经典类</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Father</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-keyword">pass</span>     <span class="hljs-comment"># 新式类</span><br></code></pre></td></tr></table></figure>
-==注意：在py3中没有继承任何类，默认继承object类，所以python3中<strong>都是新式类</strong>==</p>
-<h2 id="子类调用父类的三种方法">子类调用父类的三种方法</h2>
-<ul>
-<li>父类名.方法名(self)</li>
-<li>super(子类名，self).父类方法名()</li>
-<li>super().父类方法名</li>
-</ul>
-<h2 id="多类继承-菱形结构">多类继承-菱形结构</h2>
-<p>若子类继承于多个类，如Child继承于Mother和Father，Mother和Father继承于object类时就会组成一个菱形关系。若子类调用的方法在父类中重名时，根据mro列表的顺序先输出mro列表左边类的方法。
-<code>类名.__base__</code>：查找类的父类 <code>类名.__mro__</code>
-：查找类的继承顺序 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Mother</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">speak</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;I&#x27;m your mother!&quot;</span>)<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Father</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">speak</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;I&#x27;m your father!&quot;</span>)<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Child</span>(Mother, Father):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">say</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-comment"># 方式一</span><br>        <span class="hljs-comment"># (单和多继承 都适用)</span><br>        Father.speak(<span class="hljs-variable language_">self</span>)<br><br>        <span class="hljs-comment"># 方式二</span><br>        <span class="hljs-comment"># super默认会调用第一个父类的方法(适用于单继承 或者只想使用第一个父类的方法)</span><br>        <span class="hljs-comment"># 格式: super(子类类名, self).父类方法名()</span><br>        <span class="hljs-built_in">super</span>(Child, <span class="hljs-variable language_">self</span>).speak()<br><br>        <span class="hljs-comment"># 方式三 </span><br>        <span class="hljs-comment"># (适用于新式类) 02方式的简写</span><br>        <span class="hljs-built_in">super</span>().speak()<br><br>I = Child() <span class="hljs-comment"># 实例化</span><br><span class="hljs-built_in">print</span>(Child.__base__) <span class="hljs-comment"># 查找Child的父类</span><br><span class="hljs-built_in">print</span>(Child.__mro__) <span class="hljs-comment"># Child的继承顺序</span><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;----------------&quot;</span>)<br>I.say()<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;----------------&quot;</span>)<br>I.speak() <span class="hljs-comment"># 根据Child类在mro列表中的位置可知父类是Mother</span><br></code></pre></td></tr></table></figure> 输出结果： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python">&lt;<span class="hljs-keyword">class</span> <span class="hljs-string">&#x27;__main__.Mother&#x27;</span>&gt;<br>(&lt;<span class="hljs-keyword">class</span> <span class="hljs-string">&#x27;__main__.Child&#x27;</span>&gt;, &lt;<span class="hljs-keyword">class</span> <span class="hljs-string">&#x27;__main__.Mother&#x27;</span>&gt;, &lt;<span class="hljs-keyword">class</span> <span class="hljs-string">&#x27;__main__.Father&#x27;</span>&gt;, &lt;<span class="hljs-keyword">class</span> <span class="hljs-string">&#x27;object&#x27;</span>&gt;)<br>----------------<br>I<span class="hljs-string">&#x27;m your father!</span><br><span class="hljs-string">I&#x27;</span>m your mother!<br>I<span class="hljs-string">&#x27;m your mother!</span><br><span class="hljs-string">----------------</span><br><span class="hljs-string">I&#x27;</span>m your mother!<br></code></pre></td></tr></table></figure></p>
+                <p>将以下代码复制到主题配置的hexo-blog_pages_about.styl中
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-class">.about-avatar</span><br>  <span class="hljs-attribute">position</span> relative<br>  <span class="hljs-attribute">margin</span> -<span class="hljs-number">8rem</span> auto <span class="hljs-number">1rem</span><br>  <span class="hljs-attribute">width</span> <span class="hljs-number">10rem</span><br>  <span class="hljs-attribute">height</span> <span class="hljs-number">10rem</span><br>  <span class="hljs-attribute">z-index</span> <span class="hljs-number">3</span><br><br>  <span class="hljs-selector-tag">img</span><br>    <span class="hljs-attribute">width</span> <span class="hljs-number">100%</span><br>    <span class="hljs-attribute">height</span> <span class="hljs-number">100%</span><br>    <span class="hljs-attribute">border-radius</span> <span class="hljs-number">50%</span><br>    <span class="hljs-attribute">background-color</span> transparent<br>    <span class="hljs-attribute">object-fit</span> cover<br>    <span class="hljs-attribute">box-shadow</span> <span class="hljs-number">0</span> <span class="hljs-number">2px</span> <span class="hljs-number">5px</span> <span class="hljs-number">0</span> rgba(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>, <span class="hljs-number">0.11</span>), <span class="hljs-number">0</span> <span class="hljs-number">2px</span> <span class="hljs-number">10px</span> <span class="hljs-number">0</span> rgba(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>) // 头像框周围黑色包裹线条<br><br>    <span class="hljs-attribute">transition</span>: all <span class="hljs-number">1.7s</span><br>    <br>    animation: shadowBlink <span class="hljs-number">4s</span> infinite; // 一次闪烁的时间<br><span class="hljs-selector-class">.img-fluid</span><span class="hljs-selector-pseudo">:hover</span> &#123;<br>  <span class="hljs-attribute">background-color</span>: <span class="hljs-number">#00FFFF</span>;<br>  -webkit-<span class="hljs-attribute">box-shadow</span>: <span class="hljs-number">0px</span> <span class="hljs-number">0px</span> <span class="hljs-number">10px</span> <span class="hljs-number">10px</span> <span class="hljs-built_in">rgba</span>(<span class="hljs-number">255</span>,<span class="hljs-number">255</span>,<span class="hljs-number">255</span>, <span class="hljs-number">0.7</span>);<br>  // <span class="hljs-attribute">box-shadow</span>: <span class="hljs-number">0px</span> <span class="hljs-number">0px</span> <span class="hljs-number">70px</span> <span class="hljs-number">6px</span> <span class="hljs-built_in">rgba</span>(<span class="hljs-number">230</span>, <span class="hljs-number">230</span>, <span class="hljs-number">90</span>, <span class="hljs-number">1</span>); // 旋转时的发光阴影，分别是水平偏移、垂直偏移、模糊半径（羽化颜色）、阴影尺寸(实心颜色)和RGBA颜色<br><br>     <span class="hljs-attribute">transform</span>: <span class="hljs-built_in">rotate</span>(<span class="hljs-number">360deg</span>);<br>     -webkit-<span class="hljs-attribute">transform</span>: <span class="hljs-built_in">rotate</span>(<span class="hljs-number">360deg</span>);<br>     -moz-<span class="hljs-attribute">transform</span>: <span class="hljs-built_in">rotate</span>(<span class="hljs-number">360deg</span>);<br>     -o-<span class="hljs-attribute">transform</span>: <span class="hljs-built_in">rotate</span>(<span class="hljs-number">360deg</span>);<br>     -ms-<span class="hljs-attribute">transform</span>: <span class="hljs-built_in">rotate</span>(<span class="hljs-number">360deg</span>);<br>&#125;<br><span class="hljs-keyword">@keyframes</span> shadowBlink &#123;<br>  <span class="hljs-number">0%</span> &#123;<br>    <span class="hljs-attribute">box-shadow</span>: <span class="hljs-number">0px</span> <span class="hljs-number">0px</span> <span class="hljs-number">70px</span> <span class="hljs-number">6px</span> <span class="hljs-built_in">rgba</span>(<span class="hljs-number">230</span>, <span class="hljs-number">230</span>, <span class="hljs-number">90</span>, <span class="hljs-number">1</span>); <span class="hljs-comment">/* 初始阴影 */</span><br>  &#125;<br>  <span class="hljs-number">50%</span> &#123;<br>    <span class="hljs-attribute">box-shadow</span>: <span class="hljs-number">0px</span> <span class="hljs-number">0px</span> <span class="hljs-number">70px</span> <span class="hljs-number">6px</span> <span class="hljs-built_in">rgba</span>(<span class="hljs-number">230</span>, <span class="hljs-number">230</span>, <span class="hljs-number">90</span>, <span class="hljs-number">0.3</span>); <span class="hljs-comment">/* 闪烁时的半透明阴影 */</span><br>  &#125;<br>  <span class="hljs-number">100%</span> &#123;<br>    <span class="hljs-attribute">box-shadow</span>: <span class="hljs-number">0px</span> <span class="hljs-number">0px</span> <span class="hljs-number">70px</span> <span class="hljs-number">6px</span> <span class="hljs-built_in">rgba</span>(<span class="hljs-number">230</span>, <span class="hljs-number">230</span>, <span class="hljs-number">90</span>, <span class="hljs-number">1</span>); <span class="hljs-comment">/* 回到初始阴影 */</span><br>  &#125;<br>&#125;<br><br><span class="hljs-selector-class">.about-info</span><br>  &amp; &gt; <span class="hljs-selector-tag">div</span><br>    <span class="hljs-attribute">margin-bottom</span> .<span class="hljs-number">5rem</span><br><br><span class="hljs-selector-class">.about-name</span><br>  <span class="hljs-attribute">font-size</span> <span class="hljs-number">1.75rem</span><br>  <span class="hljs-attribute">font-weight</span> bold<br><br><span class="hljs-selector-class">.about-intro</span><br>  <span class="hljs-attribute">font-size</span> <span class="hljs-number">1rem</span><br><br><span class="hljs-selector-class">.about-icons</span><br>  &amp; &gt; <span class="hljs-selector-tag">a</span><span class="hljs-selector-pseudo">:not</span>(<span class="hljs-selector-pseudo">:last-child</span>)<br>    <span class="hljs-attribute">margin-right</span> .<span class="hljs-number">5rem</span><br><br>  &amp; &gt; <span class="hljs-selector-tag">a</span> &gt; <span class="hljs-selector-tag">i</span><br>    <span class="hljs-attribute">font-size</span> <span class="hljs-number">1.5rem</span><br><br></code></pre></td></tr></table></figure></p>
 <h2 id="参考">参考</h2>
 <p>1、<a
-target="_blank" rel="noopener" href="https://blog.csdn.net/pythondby/article/details/121758141">python
-继承（史上最详细版本）</a></p>
+target="_blank" rel="noopener" href="https://www.zzzwb.com/2023/09-27-css002.html#:~:text=fluid主题设置关">fluid主题设置关于页头像图片鼠标悬停360°旋转效果
+- Wenbin's blog (zzzwb.com)</a></p>
 
                 
               </div>
@@ -352,7 +339,7 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/pythondby/article/det
     
       <span class="category-chain">
         
-  <a href="/categories/Python%E5%AD%A6%E4%B9%A0/" class="category-chain-item">Python学习</a>
+  <a href="/categories/%E5%8D%9A%E5%AE%A2/" class="category-chain-item">博客</a>
   
   
 
@@ -367,9 +354,9 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/pythondby/article/det
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/python/" class="print-no-link">#python</a>
+        <a href="/tags/Hexo/" class="print-no-link">#Hexo</a>
       
-        <a href="/tags/python%E8%AF%AD%E6%B3%95/" class="print-no-link">#python语法</a>
+        <a href="/tags/Fluid/" class="print-no-link">#Fluid</a>
       
     </div>
   
@@ -381,8 +368,8 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/pythondby/article/det
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Python中super()函数的应用</div>
-      <div>http://example.com/07super/</div>
+      <div>Hexo+Fluid中头像旋转呼吸发光的实现</div>
+      <div>http://example.com/08avatar-rotation/</div>
     </div>
     <div class="license-meta">
       
@@ -394,7 +381,7 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/pythondby/article/det
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年9月11日</div>
+          <div>2024年9月16日</div>
         </div>
       
       
@@ -426,9 +413,9 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/pythondby/article/det
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/08avatar-rotation/" title="Hexo+Fluid中头像旋转呼吸发光的实现">
+                      <a href="/09Fluid-Onblur/" title="Hexo+Fluid中Onblur事件，离开页面时的标题显示">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Hexo+Fluid中头像旋转呼吸发光的实现</span>
+                        <span class="hidden-mobile">Hexo+Fluid中Onblur事件，离开页面时的标题显示</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -436,8 +423,8 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/pythondby/article/det
                   <article class="post-next col-6">
                     
                     
-                      <a href="/06staticmethod-classmethod-function/" title="Python中@staticmethod和@classmethod在函数中的应用">
-                        <span class="hidden-mobile">Python中@staticmethod和@classmethod在函数中的应用</span>
+                      <a href="/07super/" title="Python中super()函数的应用">
+                        <span class="hidden-mobile">Python中super()函数的应用</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

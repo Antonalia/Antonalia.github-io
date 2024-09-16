@@ -19,23 +19,23 @@
   <meta name="author" content="仓鼠小乐">
   <meta name="keywords" content="">
   
-    <meta name="description" content="介绍子类访问父类的方法">
+    <meta name="description" content="Onblur事件会在网页失去焦点时发生，即离开博客页面时显示的标题。当重新返回博客时会回归正常的页面标题">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Python中super()函数的应用">
-<meta property="og:url" content="http://example.com/07super/index.html">
+<meta property="og:title" content="Hexo+Fluid中Onblur事件，离开页面时的标题显示">
+<meta property="og:url" content="http://example.com/09Fluid-Onblur/index.html">
 <meta property="og:site_name" content="仓鼠小乐的个人博客">
-<meta property="og:description" content="介绍子类访问父类的方法">
+<meta property="og:description" content="Onblur事件会在网页失去焦点时发生，即离开博客页面时显示的标题。当重新返回博客时会回归正常的页面标题">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-09-11T08:24:31.971Z">
-<meta property="article:modified_time" content="2024-09-11T09:12:05.188Z">
+<meta property="article:published_time" content="2024-09-16T13:15:20.940Z">
+<meta property="article:modified_time" content="2024-09-16T13:27:49.532Z">
 <meta property="article:author" content="仓鼠小乐">
-<meta property="article:tag" content="python">
-<meta property="article:tag" content="python语法">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="Fluid">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>Python中super()函数的应用 - 仓鼠小乐的个人博客</title>
+  <title>Hexo+Fluid中Onblur事件，离开页面时的标题显示 - 仓鼠小乐的个人博客</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -226,7 +226,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Python中super()函数的应用"></span>
+            <span id="subtitle" data-typed-text="Hexo+Fluid中Onblur事件，离开页面时的标题显示"></span>
           
         </div>
 
@@ -242,8 +242,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-09-11 16:24" pubdate>
-          2024年9月11日 下午
+        <time datetime="2024-09-16 21:15" pubdate>
+          2024年9月16日 晚上
         </time>
       </span>
     
@@ -254,7 +254,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          458 字
+          263 字
         
       </span>
     
@@ -265,7 +265,7 @@
         
         
         
-          4 分钟
+          3 分钟
         
       </span>
     
@@ -302,12 +302,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Python中super()函数的应用</h1>
+            <h1 id="seo-header">Hexo+Fluid中Onblur事件，离开页面时的标题显示</h1>
             
               <p id="updated-time" class="note note-info" style="">
                 
                   
-                    本文最后更新于 2024年9月11日 下午
+                    本文最后更新于 2024年9月16日 晚上
                   
                 
               </p>
@@ -315,25 +315,19 @@
             
               <div class="markdown-body">
                 
-                <h2 id="类的分类经典类和新式类">类的分类:经典类和新式类</h2>
-<p>在py2中有经典类和新式类的区别：
-新式类：继承了object类的子类，以及该子类的子类，子子类
-经典类：没有继承object类的子类，以及该子类的子类，子子类 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#python2中</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Father</span>:<br>    <span class="hljs-keyword">pass</span>     <span class="hljs-comment"># 经典类</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Father</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-keyword">pass</span>     <span class="hljs-comment"># 新式类</span><br></code></pre></td></tr></table></figure>
-==注意：在py3中没有继承任何类，默认继承object类，所以python3中<strong>都是新式类</strong>==</p>
-<h2 id="子类调用父类的三种方法">子类调用父类的三种方法</h2>
-<ul>
-<li>父类名.方法名(self)</li>
-<li>super(子类名，self).父类方法名()</li>
-<li>super().父类方法名</li>
-</ul>
-<h2 id="多类继承-菱形结构">多类继承-菱形结构</h2>
-<p>若子类继承于多个类，如Child继承于Mother和Father，Mother和Father继承于object类时就会组成一个菱形关系。若子类调用的方法在父类中重名时，根据mro列表的顺序先输出mro列表左边类的方法。
-<code>类名.__base__</code>：查找类的父类 <code>类名.__mro__</code>
-：查找类的继承顺序 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Mother</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">speak</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;I&#x27;m your mother!&quot;</span>)<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Father</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">speak</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;I&#x27;m your father!&quot;</span>)<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Child</span>(Mother, Father):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">say</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-comment"># 方式一</span><br>        <span class="hljs-comment"># (单和多继承 都适用)</span><br>        Father.speak(<span class="hljs-variable language_">self</span>)<br><br>        <span class="hljs-comment"># 方式二</span><br>        <span class="hljs-comment"># super默认会调用第一个父类的方法(适用于单继承 或者只想使用第一个父类的方法)</span><br>        <span class="hljs-comment"># 格式: super(子类类名, self).父类方法名()</span><br>        <span class="hljs-built_in">super</span>(Child, <span class="hljs-variable language_">self</span>).speak()<br><br>        <span class="hljs-comment"># 方式三 </span><br>        <span class="hljs-comment"># (适用于新式类) 02方式的简写</span><br>        <span class="hljs-built_in">super</span>().speak()<br><br>I = Child() <span class="hljs-comment"># 实例化</span><br><span class="hljs-built_in">print</span>(Child.__base__) <span class="hljs-comment"># 查找Child的父类</span><br><span class="hljs-built_in">print</span>(Child.__mro__) <span class="hljs-comment"># Child的继承顺序</span><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;----------------&quot;</span>)<br>I.say()<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;----------------&quot;</span>)<br>I.speak() <span class="hljs-comment"># 根据Child类在mro列表中的位置可知父类是Mother</span><br></code></pre></td></tr></table></figure> 输出结果： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python">&lt;<span class="hljs-keyword">class</span> <span class="hljs-string">&#x27;__main__.Mother&#x27;</span>&gt;<br>(&lt;<span class="hljs-keyword">class</span> <span class="hljs-string">&#x27;__main__.Child&#x27;</span>&gt;, &lt;<span class="hljs-keyword">class</span> <span class="hljs-string">&#x27;__main__.Mother&#x27;</span>&gt;, &lt;<span class="hljs-keyword">class</span> <span class="hljs-string">&#x27;__main__.Father&#x27;</span>&gt;, &lt;<span class="hljs-keyword">class</span> <span class="hljs-string">&#x27;object&#x27;</span>&gt;)<br>----------------<br>I<span class="hljs-string">&#x27;m your father!</span><br><span class="hljs-string">I&#x27;</span>m your mother!<br>I<span class="hljs-string">&#x27;m your mother!</span><br><span class="hljs-string">----------------</span><br><span class="hljs-string">I&#x27;</span>m your mother!<br></code></pre></td></tr></table></figure></p>
+                <p>在博客配置下的hexo-blog_inject中，若是没有文件夹则新建，然后在其中新建<code>monitortext.ejs</code>,用于向页面中添加焦点监控代码。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs css">&lt;% if(theme<span class="hljs-selector-class">.fun_features</span><span class="hljs-selector-class">.monitortext</span><span class="hljs-selector-class">.enable</span>) &#123; %&gt;<br>	&lt;script type=&quot;<span class="hljs-selector-tag">text</span>/javascript&quot;&gt;<br>	  <span class="hljs-comment">/*窗口监视*/</span><br>	  <span class="hljs-selector-tag">var</span> originalTitle = document<span class="hljs-selector-class">.title</span>;<br>	  window<span class="hljs-selector-class">.onblur</span> = function()&#123;document<span class="hljs-selector-class">.title</span> = &quot;&lt;%- theme<span class="hljs-selector-class">.fun_features</span><span class="hljs-selector-class">.monitortext</span><span class="hljs-selector-class">.text</span> %&gt;&quot;&#125;;<br>	  window<span class="hljs-selector-class">.onfocus</span> = function()&#123;document<span class="hljs-selector-class">.title</span> = originalTitle&#125;;<br>	&lt;/script&gt;<br>  &lt;% &#125; %&gt;<br></code></pre></td></tr></table></figure>
+<p>然后在hexo-blog<code>page.js</code>文件，添加以下代码。也可以在官网找到具体描述<a
+target="_blank" rel="noopener" href="https://hexo.fluid-dev.com/docs/advance/#hexo-注入代码">进阶用法 |
+Hexo Fluid 用户手册 (fluid-dev.com)</a>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// 添加页面焦点监控文字</span><br>hexo.<span class="hljs-property">extend</span>.<span class="hljs-property">filter</span>.<span class="hljs-title function_">register</span>(<span class="hljs-string">&#x27;theme_inject&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">injects</span>) &#123;<br>    <span class="hljs-comment">// 添加页面焦点监控文字(here)</span><br>    injects.<span class="hljs-property">bodyBegin</span>.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;monitortext&#x27;</span>, <span class="hljs-string">&quot;source/_inject/monitortext.ejs&quot;</span>);<br>  &#125;);<br></code></pre></td></tr></table></figure>
+<p>最后编辑主题配置文件，即hexo-blog<code>_config.yml</code>文件，在
+<code>fun_features</code> 项下添加：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs js"># 一些好玩的功能<br># <span class="hljs-title class_">Some</span> fun features<br><span class="hljs-attr">fun_features</span>:<br>  # 监控网页焦点，改变文字<br>  <span class="hljs-attr">monitortext</span>:<br>    <span class="hljs-attr">enable</span>: <span class="hljs-literal">true</span><br>    <span class="hljs-attr">text</span>: 你想添加的文字<br><br>  # 为 subtitle 添加打字机效果<br>  # <span class="hljs-title class_">Typing</span> animation <span class="hljs-keyword">for</span> subtitle<br>  <span class="hljs-attr">typing</span>:<br>    <span class="hljs-attr">enable</span>: <span class="hljs-literal">true</span><br><br></code></pre></td></tr></table></figure>
 <h2 id="参考">参考</h2>
-<p>1、<a
-target="_blank" rel="noopener" href="https://blog.csdn.net/pythondby/article/details/121758141">python
-继承（史上最详细版本）</a></p>
+<p>1、https://alec-97.github.io/posts/3644508848/ 2、<a
+target="_blank" rel="noopener" href="https://hexo.fluid-dev.com/docs/advance/#hexo-注入代码">进阶用法 |
+Hexo Fluid 用户手册 (fluid-dev.com)</a></p>
 
                 
               </div>
@@ -352,7 +346,7 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/pythondby/article/det
     
       <span class="category-chain">
         
-  <a href="/categories/Python%E5%AD%A6%E4%B9%A0/" class="category-chain-item">Python学习</a>
+  <a href="/categories/%E5%8D%9A%E5%AE%A2/" class="category-chain-item">博客</a>
   
   
 
@@ -367,9 +361,9 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/pythondby/article/det
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/python/" class="print-no-link">#python</a>
+        <a href="/tags/Hexo/" class="print-no-link">#Hexo</a>
       
-        <a href="/tags/python%E8%AF%AD%E6%B3%95/" class="print-no-link">#python语法</a>
+        <a href="/tags/Fluid/" class="print-no-link">#Fluid</a>
       
     </div>
   
@@ -381,8 +375,8 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/pythondby/article/det
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Python中super()函数的应用</div>
-      <div>http://example.com/07super/</div>
+      <div>Hexo+Fluid中Onblur事件，离开页面时的标题显示</div>
+      <div>http://example.com/09Fluid-Onblur/</div>
     </div>
     <div class="license-meta">
       
@@ -394,7 +388,7 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/pythondby/article/det
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年9月11日</div>
+          <div>2024年9月16日</div>
         </div>
       
       
@@ -426,18 +420,12 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/pythondby/article/det
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/08avatar-rotation/" title="Hexo+Fluid中头像旋转呼吸发光的实现">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Hexo+Fluid中头像旋转呼吸发光的实现</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/06staticmethod-classmethod-function/" title="Python中@staticmethod和@classmethod在函数中的应用">
-                        <span class="hidden-mobile">Python中@staticmethod和@classmethod在函数中的应用</span>
+                      <a href="/08avatar-rotation/" title="Hexo+Fluid中头像旋转呼吸发光的实现">
+                        <span class="hidden-mobile">Hexo+Fluid中头像旋转呼吸发光的实现</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
